@@ -4,6 +4,7 @@ app.use(express.json());
 const port = 3000;
 const userRoutes = require('./routes/userRoutes');
 const carrierRoutes = require('./routes/carrierRoutes');
+const publicationRoutes = require('./routes/publicationRoutes');
 
 require('dotenv').config();
 
@@ -18,6 +19,7 @@ mongoose.connect(uri, {
 
 app.use('/user', userRoutes);
 app.use('/carrier', carrierRoutes);
+app.use('/publication', publicationRoutes);
 
 
 app.listen(port, () => {
