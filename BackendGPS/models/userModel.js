@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   Apellido: { type: String, required: true },
   Telefono: { type: String, required: true },
   email: { type: String, required: true },
+  publicaciones: {type: String},
 });
   
   const User = mongoose.model('userModel', userSchema);
