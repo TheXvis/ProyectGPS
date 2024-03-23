@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Carrier = require('../models/carrierModel');
 
-router.post('/create', async (req, res) => {
+router.post('/crear', async (req, res) => {
   const carrier = new Carrier(req.body);
   try {
     await carrier.save();
