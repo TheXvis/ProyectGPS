@@ -1,10 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Carrier = require('../models/carrierModel');
+const bcrypt = require('bcrypt');
+
 
 router.post('/crear', async (req, res) => {
-  const carrier = new Carrier(req.body);
   try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const carrier = new Carrier({
+      ...req.body,
+      password: hashedPassword,
+    });
+
     await carrier.save();
     res.status(201).send(carrier);
   } catch (error) {
@@ -24,6 +31,14 @@ router.get('/ver/:rut', async (req, res) => {
   }
 });
 
+router.get('/verTodos', async (req, res) => {
+  try {
+    const carriers = await Carrier.find({});
+    res.send(carriers);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
 
 router.put('/editar/:rut', async (req, res) => {
   try {

@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const carrierSchema = new mongoose.Schema({
     rut: { type: String, required: true, unique: true },
-    tipo: { type: String, required: true },
+    password: {type: String, required : true},
     nombre: { type: String, required: true },
     apellido: { type: String, required: true },
     telefono: { type: String, required: true },
@@ -13,6 +13,7 @@ const carrierSchema = new mongoose.Schema({
     ubicacion: { type: String},
     capacidadCarga: { type: Number, required: true },
     calificacion: { type: Number, default: 0 },
+    role: { type: String, required: true, default: 'carrier'},
   });
   
   module.exports = mongoose.model('Carrier', carrierSchema);
