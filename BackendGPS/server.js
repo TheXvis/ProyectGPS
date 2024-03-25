@@ -1,14 +1,19 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 app.use(express.json());
+app.use(cors());
 const port = 3000;
+
 const userRoutes = require('./routes/userRoutes');
 const carrierRoutes = require('./routes/carrierRoutes');
 const publicationRoutes = require('./routes/publicationRoutes');
+
 const User = require('./models/userModel');
 const Carrier = require('./models/carrierModel');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+
 
 require('dotenv').config();
 
