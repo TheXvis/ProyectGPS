@@ -1,8 +1,16 @@
 const express = require('express');
-const Publication = require('../models/PublicationModel'); // Asegúrate de que la ruta al modelo es correcta
+const Publication = require('../models/publicationModel');
+const User = require('../models/userModel');
 const router = express.Router();
 
 router.post('/crear', async (req, res) => {
+  const { rutUser } = req.body;
+  const user = await User.findOne({ rut: rutUser });
+
+  if (!user) {
+    return res.status(404).send({ error: 'User not found' });
+  }
+
   const publication = new Publication(req.body);
   try {
     await publication.save();

@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const publicationSchema = new Schema({
-    rutUsuario: { type: String, required: true },
-    rutTransportista: { type: String },
+    rutUser: { type: String, required: true },
+    rutCarrier: { type: String },
     nombre: { type: String, required: true },
     tipoMercancia: { type: String, required: true },
     imagen: { type: String },
