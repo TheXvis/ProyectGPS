@@ -78,6 +78,7 @@ router.put('/aceptar/:publicationId/:carrierRut', async (req, res) => {
       return res.status(404).send({ error: 'Publication not found' });
     }
     publication.rutCarrier = carrier.rut;
+    publication.estado = 'aceptada';
     await publication.save();
     res.send("Publicacion aceptada con exito");
   } catch (e) {
@@ -86,4 +87,18 @@ router.put('/aceptar/:publicationId/:carrierRut', async (req, res) => {
   }
 });
 
+router.put('/cambiarDisp/:rut', async (req, res) => {
+  const rut = req.params.rut;
+  try {
+    const carrier = await Carrier.findOne({ rut: rut });
+    if (!carrier) {
+      return res.status(404).send({ error: 'Carrier not found' });
+    }
+    carrier.disponibilidad = !carrier.disponibilidad;
+    await carrier.save();
+    res.send(carrier);
+  } catch (e) {
+    res.status(500).send({ error: 'An error occurred', details: e });
+  }
+});
 module.exports = router;

@@ -11,6 +11,7 @@ const carrierSchema = new mongoose.Schema({
     vehiculo: { type: String, required: true },
     patente: { type: String, required: true },
     ubicacion: { type: String},
+    disponibilidad: { type: Boolean, default: false },
     capacidadCarga: { type: Number, required: true },
     calificacion: { type: Number, default: 0 },
     role: { type: String, required: true, default: 'carrier'},

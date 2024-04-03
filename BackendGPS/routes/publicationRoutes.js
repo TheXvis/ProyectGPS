@@ -69,4 +69,18 @@ router.delete('/borrar/:id', async (req, res) => {
   }
 });
 
+router.put('/cancelar/:id', async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const publication = await Publication.findById(_id);
+    if (!publication) {
+      return res.status(404).send({ error: 'Publication not found' });
+    }
+    publication.estado = 'cancelada';
+    await publication.save();
+    res.send("Publicacion cancelada con exito");
+  } catch (e) {
+    res.status(500).send({ error: 'An error occurred', details: e });
+  }
+});
 module.exports = router;
