@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Carrier = require('../models/carrierModel');
+const Publication = require('../models/publicationModel');
 const bcrypt = require('bcrypt');
 
 
@@ -52,7 +53,6 @@ router.put('/editar/:rut', async (req, res) => {
   }
 });
 
-// Delete
 router.delete('/borrar/:rut', async (req, res) => {
   try {
     const carrier = await Carrier.findOneAndDelete({ rut: req.params.rut });
@@ -62,6 +62,27 @@ router.delete('/borrar/:rut', async (req, res) => {
     res.send(carrier);
   } catch (error) {
     res.status(500).send();
+  }
+});
+
+router.put('/aceptar/:publicationId/:carrierRut', async (req, res) => {
+  const publicationId = req.params.publicationId;
+  const carrierRut = req.params.carrierRut;
+  try {
+    const carrier = await Carrier.findOne({ rut: carrierRut });
+    if (!carrier) {
+      return res.status(404).send({ error: 'Carrier not found' });
+    }
+    const publication = await Publication.findById(publicationId);
+    if (!publication) {
+      return res.status(404).send({ error: 'Publication not found' });
+    }
+    publication.rutCarrier = carrier.rut;
+    await publication.save();
+    res.send("Publicacion aceptada con exito");
+  } catch (e) {
+    console.error(e);
+    res.status(500).send({ error: 'An error occurred', details: e });
   }
 });
 

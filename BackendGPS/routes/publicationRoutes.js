@@ -20,7 +20,6 @@ router.post('/crear', async (req, res) => {
   }
 });
 
-
 router.get('/verTodo', async (req, res) => {
   try {
     const publications = await Publication.find({});
@@ -30,14 +29,14 @@ router.get('/verTodo', async (req, res) => {
   }
 });
 
-router.get('/ver/:id', async (req, res) => {
-  const _id = req.params.id;
+router.get('/ver/:rutUser', async (req, res) => {
+  const rutUser = req.params.rutUser;
   try {
-    const publication = await Publication.findById(_id);
-    if (!publication) {
+    const publications = await Publication.find({ rutUser: rutUser });
+    if (!publications.length) {
       return res.status(404).send();
     }
-    res.send(publication);
+    res.send(publications);
   } catch (e) {
     res.status(500).send();
   }
