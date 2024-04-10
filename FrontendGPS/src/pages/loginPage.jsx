@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
+  const navigate = useNavigate();
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
 
@@ -17,6 +19,11 @@ function LoginPage() {
         console.log(data);
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', data.role);
+  
+        const userType = localStorage.getItem('role');
+        if (userType === 'user') {
+          navigate('/usuario-home');
+        }
       } else {
         console.error(data);
       }
