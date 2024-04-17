@@ -19,6 +19,7 @@ function LoginPage() {
         console.log(data);
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', data.role);
+        localStorage.setItem('rut', rut);
   
         const userType = localStorage.getItem('role');
         if (userType === 'user') {

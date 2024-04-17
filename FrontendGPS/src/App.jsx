@@ -1,9 +1,12 @@
 import './App.css'
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import LoginPage from './pages/loginPage';
 import UserPage from './pages/userPage';
+import CreatePublication from './components/createPublication';
+import SideBar from './components/sideBar';
+
 
 function Redirector() {
   const navigate = useNavigate();
@@ -22,14 +25,16 @@ function Redirector() {
 function App() {
   return (
     <Router>
-      <div>
+      <div className=" dark:bg-gray-900 min-h-screen">
         <header>
           <Redirector />
-          <Routes>
-            <Route path="/" element={<LoginPage/>} />
-            <Route path="/usuario-home" element={<UserPage/>} />
-          </Routes>
         </header>
+        <SideBar />
+        <Routes>
+          <Route path="/" element={<LoginPage/>} />
+          <Route path="/usuario-home" element={<UserPage/>} />
+          <Route path="/crear-publicacion" element={<CreatePublication/>} />
+        </Routes>
       </div>
     </Router>
   );

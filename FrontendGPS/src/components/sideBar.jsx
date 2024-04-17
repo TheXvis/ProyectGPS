@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 function SideBar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -27,7 +29,7 @@ function SideBar() {
             {isDropdownOpen && (
             <ul id="dropdown-example" className="py-2 space-y-2">
                 <li>
-                <a href="#" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Crear publicacion</a>
+                <Link to="/crear-publicacion" href="#" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Crear publicacion</Link>
                 </li>
                 <li>
                 <a href="#" className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Mis publicaciones</a>

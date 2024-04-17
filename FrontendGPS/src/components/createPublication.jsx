@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 function CreatePublicationForm() {
-  const [rutUser, setRutUser] = useState('');
+  const [rutUser] = useState(localStorage.getItem('rut') || '');
   const [nombre, setNombre] = useState('');
   const [tipoMercancia, setTipoMercancia] = useState('');
   const [imagen, setImagen] = useState('');
@@ -26,18 +27,24 @@ function CreatePublicationForm() {
     try {
       const response = await axios.post('http://localhost:3000/publication/crear', publication);
       console.log(response.data);
+      Swal.fire(
+        '¡Publicación creada!',
+        'Tu publicación ha sido creada con éxito.',
+        'success'
+      );
     } catch (error) {
       console.error(error);
+      Swal.fire(
+        'Error',
+        'Hubo un error al crear la publicación.',
+        'error'
+      );
     }
   };
 
   return (
     <div  className="max-w-lg mx-auto block mb-2 p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
     <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
-    <div className="mb-5">
-        <label htmlFor="large-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Rut</label>
-        <input type="text" id="base-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={rutUser} onChange={(e) => setRutUser(e.target.value)} placeholder="Rut User" required />
-    </div>
 
     <div className="mb-5">
         <label htmlFor="large-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
