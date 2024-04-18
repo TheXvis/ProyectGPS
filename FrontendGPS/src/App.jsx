@@ -8,6 +8,8 @@ import CreatePublication from './components/createPublication';
 import SideBar from './components/sideBar';
 import PropTypes from 'prop-types';
 
+import MapComponent from './components/mapTest';
+
 function Redirector() {
   const navigate = useNavigate();
 
@@ -46,6 +48,7 @@ function App() {
         <Route path="/" element={<LoginPage/>} />
           <Route path="/usuario-home" element={<Layout><UserPage/></Layout>} />
           <Route path="/crear-publicacion" element={<Layout><CreatePublication/></Layout>} />
+          <Route path="/ver-mapa" element={<MapComponent/>} />
         </Routes>
       </div>
     </Router>

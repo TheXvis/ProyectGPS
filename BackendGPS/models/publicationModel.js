@@ -9,7 +9,8 @@ const publicationSchema = new Schema({
     imagen: { type: String },
     peso: { type: Number, required: true },
     precio: { type: Number, required: true },
-    ubicacion: { type: String, required: true },
+    ubicacionCarga: { type: String, required: true },
+    ubicacionDescarga: { type: String, required: true },
     estado: { type: String},
   });
 
