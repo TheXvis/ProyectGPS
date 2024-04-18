@@ -7,6 +7,8 @@ import UserPage from './pages/userPage';
 import CreatePublication from './components/createPublication';
 import SideBar from './components/sideBar';
 import PropTypes from 'prop-types';
+import RegisterPage from './pages/registerPage';
+
 
 function Redirector() {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ function App() {
         <Route path="/" element={<LoginPage/>} />
           <Route path="/usuario-home" element={<Layout><UserPage/></Layout>} />
           <Route path="/crear-publicacion" element={<Layout><CreatePublication/></Layout>} />
+          <Route path="/registro" element={<RegisterPage/>} /> 
         </Routes>
       </div>
     </Router>
