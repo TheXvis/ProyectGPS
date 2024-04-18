@@ -6,7 +6,7 @@ import LoginPage from './pages/loginPage';
 import UserPage from './pages/userPage';
 import CreatePublication from './components/createPublication';
 import SideBar from './components/sideBar';
-
+import PropTypes from 'prop-types';
 
 function Redirector() {
   const navigate = useNavigate();
@@ -22,6 +22,19 @@ function Redirector() {
   return null;
 }
 
+function Layout({ children }) {
+  return (
+    <>
+      <SideBar />
+      {children}
+    </>
+  );
+}
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 function App() {
   return (
     <Router>
@@ -29,11 +42,10 @@ function App() {
         <header>
           <Redirector />
         </header>
-        <SideBar />
         <Routes>
-          <Route path="/" element={<LoginPage/>} />
-          <Route path="/usuario-home" element={<UserPage/>} />
-          <Route path="/crear-publicacion" element={<CreatePublication/>} />
+        <Route path="/" element={<LoginPage/>} />
+          <Route path="/usuario-home" element={<Layout><UserPage/></Layout>} />
+          <Route path="/crear-publicacion" element={<Layout><CreatePublication/></Layout>} />
         </Routes>
       </div>
     </Router>
