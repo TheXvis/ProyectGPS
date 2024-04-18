@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import axios from 'axios';
-import Swal from 'sweetalert2';
 
 function CreatePublicationForm() {
   const [rutUser] = useState(localStorage.getItem('rut') || '');
@@ -27,18 +26,10 @@ function CreatePublicationForm() {
     try {
       const response = await axios.post('http://localhost:3000/publication/crear', publication);
       console.log(response.data);
-      Swal.fire(
-        '¡Publicación creada!',
-        'Tu publicación ha sido creada con éxito.',
-        'success'
-      );
+      alert('Publicación creada exitosamente');
     } catch (error) {
       console.error(error);
-      Swal.fire(
-        'Error',
-        'Hubo un error al crear la publicación.',
-        'error'
-      );
+      alert('Error');
     }
   };
 
