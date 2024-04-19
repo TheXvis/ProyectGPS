@@ -1,10 +1,12 @@
+import CarrierForm from "../components/carrierComponents/carrierForm.jsx";
 const CarrierPage = () => {
+  
     return (
-        <div className="bg-gray-200 p-4 rounded-md shadow-sm">
-            <h2>Mi Componente</h2>
-            <p className="text-gray-600">Este es un poco de contenido.</p>
-        </div>
-    );
-};
+        <>
+            <h1 className="text-3xl font-semibold text-white">CarrierPage</h1>
+            <CarrierForm />
+        </>
+    )
+}
 
 export default CarrierPage;
