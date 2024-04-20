@@ -1,28 +1,55 @@
+import { useState } from "react";
 
 const CarrierForm = () => {
     //http://localhost:3000/carrier/crear
-    /*{
-  "rut": "000",
-  "password": "password",
-  "nombre": "Nombre del Carrier",
-  "apellido": "Apellido del Carrier",
-  "telefono": "+56912345678",
-  "vehiculo": "Tipo de Vehículo",
-  "patente": "ABCD12",
-  "ubicacion": "Ubicación del Carrier",
-  "capacidadCarga": 1000,
-  "calificacion": 5
-}*/
+const [newCarrier, setNewCarrier] = useState({
+    rut: "",
+    password: "",
+    nombre: "",
+    apellido: "",
+    telefono: "",
+    descripcion: "",
+    vehiculo: "",
+    patente: "",
+    ubicacion: "",
+    disponibilidad: false,
+    capacidadCarga: 0,
+    calificacion: 0,
+    role: "carrier",
+    email: ""
+});
+
+const handleInputChange = (e) => {
+    setNewCarrier({
+        ...newCarrier,
+        [e.target.name]: e.target.value
+    });
+}
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const response = await fetch("http://localhost:3000/carrier/crear", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newCarrier)
+        });
+        const result = await response.json();
+        console.log(result);
+    } catch (err) {
+        console.error(err.message);
+    }
+}
 
     return (
         <div className="flex justify-center items-center h-screen">
-            <form className="w-1/2 bg-gray-100 p-6 rounded-lg shadow-lg">
+            <form className="w-1/2 bg-gray-100 p-6 rounded-lg shadow-lg" onSubmit={handleSubmit}>
                 <div className="space-y-12">
                     <div className="border-b border-gray-900/10 pb-12">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">Personal ENFERMEDAAAA</h2>
                         <p className="mt-1 text-sm leading-6 text-gray-600">Use a permanent address where you can receive ENFERMEDAAAA.</p>
 
-                        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-6">
                             <div className="sm:col-span-3">
                                 <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
                                     Nombres
@@ -30,8 +57,10 @@ const CarrierForm = () => {
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="first-name"
+                                        name="nombre"
+                                        value={newCarrier.nombre}
                                         id="first-name"
+                                        onChange={handleInputChange}
                                         autoComplete="given-name"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -45,8 +74,10 @@ const CarrierForm = () => {
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="last-name"
+                                        name="apellido"
+                                        value={newCarrier.apellido}
                                         id="last-name"
+                                        onChange={handleInputChange}
                                         autoComplete="family-name"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -60,8 +91,10 @@ const CarrierForm = () => {
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="last-name"
+                                        name="rut"
+                                        value={newCarrier.rut}
                                         id="last-name"
+                                        onChange={handleInputChange}
                                         autoComplete="family-name"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -75,8 +108,10 @@ const CarrierForm = () => {
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="last-name"
+                                        name="telefono"
+                                        value={newCarrier.telefono}
                                         id="last-name"
+                                        onChange={handleInputChange}
                                         autoComplete="family-name"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -91,7 +126,9 @@ const CarrierForm = () => {
                                     <input
                                         id="email"
                                         name="email"
+                                        value={newCarrier.email}
                                         type="email"
+                                        onChange={handleInputChange}
                                         autoComplete="email"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -100,13 +137,15 @@ const CarrierForm = () => {
 
                             <div className="sm:col-span-3">
                                 <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
-                                    Apellidos
+                                    rol
                                 </label>
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="last-name"
+                                        name="role"
+                                        value={newCarrier.role}
                                         id="last-name"
+                                        onChange={handleInputChange}
                                         autoComplete="family-name"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -115,13 +154,15 @@ const CarrierForm = () => {
 
                             <div className="sm:col-span-3">
                                 <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
-                                    Apellidos
+                                    Contraseña
                                 </label>
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="last-name"
+                                        name="password"
+                                        value={newCarrier.password}
                                         id="last-name"
+                                        onChange={handleInputChange}
                                         autoComplete="family-name"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -130,7 +171,7 @@ const CarrierForm = () => {
 
                             <div className="sm:col-span-3">
                                 <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
-                                    Apellidos
+                                    Repetir Contraseña
                                 </label>
                                 <div className="mt-2">
                                     <input
@@ -151,8 +192,10 @@ const CarrierForm = () => {
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="street-address"
+                                        name="vehiculo"
+                                        value={newCarrier.vehiculo}
                                         id="street-address"
+                                        onChange={handleInputChange}
                                         autoComplete="street-address"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -166,8 +209,10 @@ const CarrierForm = () => {
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="street-address"
+                                        name="patente"
+                                        value={newCarrier.patente}
                                         id="street-address"
+                                        onChange={handleInputChange}
                                         autoComplete="street-address"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -181,8 +226,10 @@ const CarrierForm = () => {
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="city"
+                                        name="ubicacion"
+                                        value={newCarrier.ubicacion}
                                         id="city"
+                                        onChange={handleInputChange}
                                         autoComplete="address-level2"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -196,8 +243,10 @@ const CarrierForm = () => {
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="region"
+                                        name="capacidadCarga"
+                                        value={newCarrier.capacidadCarga}
                                         id="region"
+                                        onChange={handleInputChange}
                                         autoComplete="address-level1"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -233,7 +282,6 @@ const CarrierForm = () => {
                         Save
                     </button>
                 </div>
-
             </form>
         </div>
     )
