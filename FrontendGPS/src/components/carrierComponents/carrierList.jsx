@@ -6,16 +6,16 @@ const CarrierList = () => {
     useEffect(() => {
         const fetchCarriers = async () => {
             try {
-                const response = await fetch("http://localhost:3000/carrier/verTodos" , 
-                { 
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" }
-                });
+                const response = await fetch("http://localhost:3000/carrier/verTodos",
+                    {
+                        method: "GET",
+                        headers: { "Content-Type": "application/json" }
+                    });
                 const result = await response.json();
                 setCarriers(result);
             } catch (err) {
                 console.error(err.message);
-            }            
+            }
         }
         fetchCarriers()
     }, [])
@@ -23,9 +23,10 @@ const CarrierList = () => {
     return (
         <div className="flex min-h-screen items-center justify-center">
             <div className="overflow-x-auto">
-                <table className="min-w-full bg-white shadow-md rounded-xl">
+                <table className="min-w-full bg-gray-100 shadow-md rounded-xl">
                     <thead>
                         <tr className="bg-blue-gray-100 text-gray-700">
+                            <th className="py-3 px-4 text-left">RUT</th>
                             <th className="py-3 px-4 text-left">Nombre</th>
                             <th className="py-3 px-4 text-left">apellido</th>
                             <th className="py-3 px-4 text-left">telefono</th>
@@ -36,6 +37,7 @@ const CarrierList = () => {
                     <tbody className="text-blue-gray-900">
                         {carriers.map((carrier) => (
                             <tr className="border-b border-blue-gray-200" key={carrier._id}>
+                                <td className="py-3 px-4">{carrier.rut}</td>
                                 <td className="py-3 px-4">{carrier.nombre}</td>
                                 <td className="py-3 px-4">{carrier.apellido}</td>
                                 <td className="py-3 px-4">{carrier.telefono}</td>

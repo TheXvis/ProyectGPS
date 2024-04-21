@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 const CarrierForm = () => {
-    //http://localhost:3000/carrier/crear
 const [newCarrier, setNewCarrier] = useState({
     rut: "",
     password: "",
