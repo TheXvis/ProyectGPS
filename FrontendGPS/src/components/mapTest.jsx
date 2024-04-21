@@ -58,7 +58,7 @@ function MapComponent() {
         });
     }, []);
 
-    return <div ref={mapRef} style={{ height: "100vh", width: "100%" }} />;
+    return <div ref={mapRef} style={{ height: "100vh", width: "100%"}} />;
 }
 
 
