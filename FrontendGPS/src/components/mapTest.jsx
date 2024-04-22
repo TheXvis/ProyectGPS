@@ -32,6 +32,7 @@ function MapComponent() {
         getLocation().then(location => {
             if (!mapInstance) {
                 mapInstance = L.map(mapRef.current).setView([location.lat, location.lng], 13);
+                L.marker([location.lat, location.lng]).addTo(mapInstance);
     
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
