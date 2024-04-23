@@ -46,37 +46,33 @@ function Direccion() {
 			});
 	}
 
-	function handleOriginInputChange(event) {
+	function handleInputChange(event, setInput, setSuggestions) {
 		var query = event.target.value;
 		// busca numero de casa en el string query
 		var houseNumberMatch = query.match(/\d+/);
 		setHouseNumber(houseNumberMatch ? houseNumberMatch[0] : ""); // Actualiza el estado de houseNumber
-		setOrigin(query);
+		setInput(query);
 		clearTimeout(originTimer.current); // Limpia el temporizador actual
 		originTimer.current = setTimeout(() => {
 			//cambiar espacios en blanco por %20
 			query = query.replace(/\s/g, "%20");
-			fetchSuggestions(query, setOriginSuggestions);
-		}, 1500); // Inicia un nuevo temporizador que espera 1.5 segundos antes de invocar fetchSuggestions
-	}
-
-	function handleDestinationInputChange(event) {
-		var query = event.target.value;
-		// busca numero de casa en el string query
-		var houseNumberMatch = query.match(/\d+/);
-		setHouseNumber(houseNumberMatch ? houseNumberMatch[0] : ""); // Actualiza el estado de houseNumber
-		setDestination(query);
-		clearTimeout(destinationTimer.current); // Limpia el temporizador actual
-		destinationTimer.current = setTimeout(() => {
-			//cambiar espacios en blanco por %20
-			query = query.replace(/\s/g, "%20");
-			fetchSuggestions(query, setDestinationSuggestions);
+			fetchSuggestions(query, setSuggestions);
 		}, 1500); // Espera 1.5 segundos antes de invocar fetchSuggestions
 	}
+	
+	function handleOriginInputChange(event) {
+		handleInputChange(event, setOrigin, setOriginSuggestions);
+	}
+	
+	function handleDestinationInputChange(event) {
+		handleInputChange(event, setDestination, setDestinationSuggestions);
+	}
+	
 
 	function handleSuggestionClick(setInput, suggestion) {
 		console.log(suggestion.display_name);
 		setInput(`${houseNumber} ${suggestion.display_name}`);
+		// 
 		
 	}
 	
