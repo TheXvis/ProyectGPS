@@ -73,6 +73,26 @@ router.get('/verTodos', async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+  router.post('/registro', async (req, res) => {
+    try {
+      const { rut, password, Nombre, Apellido, email, Telefono } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({
+        rut,
+        password: hashedPassword,
+        Nombre,
+        Apellido,
+        email,
+        Telefono
+        
+      });
+      
+      const savedUser = await newUser.save();
+      res.status(201).json(savedUser);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = router;
 
