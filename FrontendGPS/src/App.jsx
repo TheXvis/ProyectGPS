@@ -9,6 +9,7 @@ import SideBar from './components/sideBar';
 import PropTypes from 'prop-types';
 
 import MapPage from './pages/mapDirectionTest';
+import CarrierPage from './pages/carrierPage.jsx';
 
 function Redirector() {
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ function App() {
           <Route path="/usuario-home" element={<Layout><UserPage/></Layout>} />
           <Route path="/crear-publicacion" element={<Layout><CreatePublication/></Layout>} />
           <Route path="/ver-mapa" element={<Layout><MapPage/></Layout>} />
+          <Route path="/carrierPage" element={<CarrierPage/>} />
         </Routes>
       </div>
     </Router>
