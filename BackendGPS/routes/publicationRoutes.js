@@ -24,9 +24,11 @@ router.post('/crear', upload.single('imagen'), async (req, res) => {
     return res.status(404).send({ error: 'User not found' });
   }
 
+  const imagePath = req.file ? req.file.path.replace(/\\/g, '/') : 'No tiene';
+
   const publication = new Publication({
     ...req.body,
-    imagen: req.file ? req.file.path : 'No tiene',
+    imagen: imagePath,
   });
 
   try {
