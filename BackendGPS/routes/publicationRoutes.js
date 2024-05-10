@@ -2,8 +2,21 @@ const express = require('express');
 const Publication = require('../models/publicationModel');
 const User = require('../models/userModel');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 
-router.post('/crear', async (req, res) => {
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'images')
+  },
+  filename: function(req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)) // append the original file extension
+  }
+})
+
+const upload = multer({ storage: storage });
+
+router.post('/crear', upload.single('imagen'), async (req, res) => {
   const { rutUser } = req.body;
   const user = await User.findOne({ rut: rutUser });
 
@@ -11,13 +24,23 @@ router.post('/crear', async (req, res) => {
     return res.status(404).send({ error: 'User not found' });
   }
 
-  const publication = new Publication(req.body);
+  const imagePath = req.file ? req.file.path.replace(/\\/g, '/') : 'No tiene';
+
+  const publication = new Publication({
+    ...req.body,
+    imagen: imagePath,
+  });
+
   try {
     await publication.save();
     res.status(201).send(publication);
   } catch (e) {
     res.status(400).send(e);
   }
+});
+
+router.get('/images/:filename', (req, res) => {
+  res.sendFile(path.resolve('images', req.params.filename));
 });
 
 router.get('/verTodo', async (req, res) => {
