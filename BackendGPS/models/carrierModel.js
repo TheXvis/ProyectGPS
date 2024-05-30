@@ -6,15 +6,16 @@ const carrierSchema = new mongoose.Schema({
     password: {type: String, required : true},
     nombre: { type: String, required: true },
     apellido: { type: String, required: true },
-    telefono: { type: String, required: true },
+    telefono: { type: String, required: false },
     descripcion: { type: String },
-    vehiculo: { type: String, required: true },
-    patente: { type: String, required: true },
+    vehiculo: { type: String, required: false },
+    patente: { type: String, required: false },
     ubicacion: { type: String},
     disponibilidad: { type: Boolean, default: false },
-    capacidadCarga: { type: Number, required: true },
+    capacidadCarga: { type: Number, required: false },
     calificacion: { type: Number, default: 0 },
     role: { type: String, required: true, default: 'carrier'},
+    email: { type: String, required: false },
   });
   
   module.exports = mongoose.model('Carrier', carrierSchema);

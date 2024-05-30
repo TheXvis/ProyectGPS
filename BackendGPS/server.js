@@ -29,6 +29,7 @@ mongoose.connect(uri, {
 app.use('/user', userRoutes);
 app.use('/carrier', carrierRoutes);
 app.use('/publication', publicationRoutes);
+app.use('/images', express.static('images'));
 
 app.post('/login', async (req, res) => {
   try {
