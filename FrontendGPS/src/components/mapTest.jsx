@@ -25,7 +25,7 @@ function MapComponent() {
             reject();
         }
     });
-}
+    }
 
 
     useEffect(() => {
