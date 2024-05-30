@@ -3,10 +3,14 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import LoginPage from './pages/loginPage';
-import UserPage from './pages/userPage';
-import CreatePublication from './components/createPublication';
+import UserPage from './pages/User/userPage';
+import CreatePublication from './pages/User/createPublication';
 import SideBar from './components/sideBar';
 import PropTypes from 'prop-types';
+import UserPublicationsPage from './pages/User/misPublicaciones';
+import CarrierPage from './pages/carrierPage.jsx';
+import AccountPage from './pages/User/accountPage.jsx';
+
 
 function Redirector() {
   const navigate = useNavigate();
@@ -46,6 +50,9 @@ function App() {
         <Route path="/" element={<LoginPage/>} />
           <Route path="/usuario-home" element={<Layout><UserPage/></Layout>} />
           <Route path="/crear-publicacion" element={<Layout><CreatePublication/></Layout>} />
+          <Route path="/mis-publicaciones" element={<Layout><UserPublicationsPage/></Layout>} />
+          <Route path="/carrierPage" element={<CarrierPage/>} />
+          <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
         </Routes>
       </div>
     </Router>

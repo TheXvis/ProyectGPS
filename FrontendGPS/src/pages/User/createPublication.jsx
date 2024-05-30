@@ -13,25 +13,28 @@ function CreatePublicationForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const publication = {
-      rutUser,
-      nombre,
-      tipoMercancia,
-      imagen,
-      peso,
-      precio,
-      ubicacion,
-    };
+    const formData = new FormData();
+      formData.append('rutUser', rutUser);
+      formData.append('nombre', nombre);
+      formData.append('tipoMercancia', tipoMercancia);
+      formData.append('imagen', imagen);
+      formData.append('peso', peso);
+      formData.append('precio', precio);
+      formData.append('ubicacion', ubicacion);
 
-    try {
-      const response = await axios.post('http://localhost:3000/publication/crear', publication);
-      console.log(response.data);
-      alert('Publicación creada exitosamente');
-    } catch (error) {
-      console.error(error);
-      alert('Error');
-    }
-  };
+      try {
+        const response = await axios.post('http://localhost:3000/publication/crear', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log(response.data);
+        alert('Publicación creada exitosamente');
+      } catch (error) {
+        console.error(error);
+        alert('Error');
+      }
+    };
 
   return (
     <div  className="max-w-lg mx-auto block mb-2 p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -47,9 +50,9 @@ function CreatePublicationForm() {
         <input type="text" id="base-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={tipoMercancia} onChange={(e) => setTipoMercancia(e.target.value)} placeholder="Tipo Mercancia" required />
     </div>
 
-    <div className="mb-5">  
-        <label htmlFor="large-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Imagen</label>
-        <input type="text" id="base-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value={imagen} onChange={(e) => setImagen(e.target.value)} placeholder="Imagen" />
+    <div className="mb-5">
+      <label htmlFor="image-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Imagen</label>
+      <input type="file" id="image-input" className="dark:text-white" onChange={(e) => setImagen(e.target.files[0])} required />
     </div>
 
     <div className="mb-5">
