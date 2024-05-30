@@ -2,7 +2,7 @@ import CarrierForm from "../components/carrierComponents/carrierForm.jsx";
 import CarrierList from "../components/carrierComponents/carrierList.jsx";
 // import ModalComponent from "../components/carrierComponents/modalComponent.jsx";
 import Modal from "../components/carrierComponents/modalComponent.jsx";
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const CarrierPage = () => {
     //constantes para que funcione el modal
