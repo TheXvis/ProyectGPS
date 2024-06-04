@@ -65,6 +65,19 @@ router.get('/ver/:rutUser', async (req, res) => {
   }
 });
 
+router.get('/buscar/:id', async (req, res) => {
+  try {
+    const publication = await Publication.findById(req.params.id);
+    if (publication) {
+      res.status(200).json(publication);
+    } else {
+      res.status(404).json({ message: 'Publication not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.patch('/editar/:id', async (req, res) => {
   const updates = Object.keys(req.body);
   try {
