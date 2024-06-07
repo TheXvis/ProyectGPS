@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+import SendIcon from "./../../assets/send.svg";
+import GpsIcon from "./../../assets/gps.svg";
+import MapIcon from "./../../assets/mapPoint.svg";
 
 function Direccion() {
 	const [origin, setOrigin] = useState("");
@@ -59,23 +62,19 @@ function Direccion() {
 			fetchSuggestions(query, setSuggestions);
 		}, 1500); // Espera 1.5 segundos antes de invocar fetchSuggestions
 	}
-	
+
 	function handleOriginInputChange(event) {
 		handleInputChange(event, setOrigin, setOriginSuggestions);
 	}
-	
+
 	function handleDestinationInputChange(event) {
 		handleInputChange(event, setDestination, setDestinationSuggestions);
 	}
-	
 
 	function handleSuggestionClick(setInput, suggestion) {
 		console.log(suggestion.display_name);
 		setInput(`${houseNumber} ${suggestion.display_name}`);
-		// 
-		
 	}
-	
 
 	function handleBlur() {
 		setTimeout(() => {
@@ -83,12 +82,15 @@ function Direccion() {
 		}, 200);
 	}
 
-
 	return (
-		<form className="space-y-4">
-			<div>
+		
+		<form className="space-y-4" style={{ height: "19vh", width: "100%" }}>
+			
+
+
+			<div className="flex items-center">
 				<label htmlFor="origin" className="block font-medium text-gray-700">
-					Origin:
+					Origen:
 				</label>
 				<input
 					type="text"
@@ -99,6 +101,24 @@ function Direccion() {
 					onChange={handleOriginInputChange}
 					onBlur={handleBlur}
 				/>
+				<button
+					type="button"
+					className="group border border-gray-300 hover:bg-gray-300 focus:outline-none rounded-lg p-2.5 inline-flex items-center me-2">
+					<img src={SendIcon} className="w-6 h-6 invert group-hover:invert-0" />
+					<span className="sr-only">Icono de Enviar</span>
+				</button>
+				<button
+					type="button"
+					className="group border border-gray-300 hover:bg-gray-300 focus:outline-none rounded-lg p-2.5 inline-flex items-center me-2">
+					<img src={MapIcon} className="w-6 h-6 invert group-hover:invert-0" />
+					<span className="sr-only">Icono de ubicar en el mapa</span>
+				</button>
+				<button
+					type="button"
+					className="group border border-gray-300 hover:bg-gray-300 focus:outline-none rounded-lg p-2.5 inline-flex items-center me-2">
+					<img src={GpsIcon} className="w-6 h-6 invert group-hover:invert-0" />
+					<span className="sr-only">Icono de ubicar con GPS</span>
+				</button>
 				<ul className="suggestions">
 					{originSuggestions.slice(0, 5).map((suggestion, index) => (
 						<li
@@ -110,11 +130,11 @@ function Direccion() {
 					))}
 				</ul>
 			</div>
-			<div>
+			<div className="flex items-center">
 				<label
 					htmlFor="destination"
 					className="block font-medium text-gray-700">
-					Destination:
+					Destino:
 				</label>
 				<input
 					type="text"
@@ -125,6 +145,24 @@ function Direccion() {
 					onChange={handleDestinationInputChange}
 					onBlur={handleBlur}
 				/>
+				<button
+					type="button"
+					className="group border border-gray-300 hover:bg-gray-300 focus:outline-none rounded-lg p-2.5 inline-flex items-center me-2">
+					<img src={SendIcon} className="w-6 h-6 invert group-hover:invert-0" />
+					<span className="sr-only">Icono de Enviar</span>
+				</button>
+				<button
+					type="button"
+					className="group border border-gray-300 hover:bg-gray-300 focus:outline-none rounded-lg p-2.5 inline-flex items-center me-2">
+					<img src={MapIcon} className="w-6 h-6 invert group-hover:invert-0" />
+					<span className="sr-only">Icono de ubicar en el mapa</span>
+				</button>
+				<button
+					type="button"
+					className="group border border-gray-300 hover:bg-gray-300 focus:outline-none rounded-lg p-2.5 inline-flex items-center me-2">
+					<img src={GpsIcon} className="w-6 h-6 invert group-hover:invert-0" />
+					<span className="sr-only">Icono de ubicar con GPS</span>
+				</button>
 				<ul className="suggestions">
 					{destinationSuggestions.slice(0, 5).map((suggestion, index) => (
 						<li

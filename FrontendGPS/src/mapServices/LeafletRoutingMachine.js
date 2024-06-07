@@ -3,9 +3,9 @@ import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import { useMap } from "react-leaflet";
-// import { Control } from 'leaflet-routing-machine';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.js';
+import getLocation from "./getLocation";
 
 
 const LeafletRoutingMachine = () => {
@@ -13,12 +13,17 @@ const LeafletRoutingMachine = () => {
   const map = useMap();
   let DefaultIcon = L.icon({
     iconUrl: "/mapIcons/cargo-truck.png",
+    
     iconSize: [50, 50],
   });
   useEffect(() => {
-    var marker1 = L.marker([-36.821123, -73.012784], { icon: DefaultIcon }).addTo(
-      map
-    );
+    //llamada a get loaction
+    getLocation()
+
+
+    // var marker1 = L.marker([-36.821123, -73.012784], { icon: DefaultIcon }).addTo(
+    //   map
+    // );
     map.on("click", function (e) {
       L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
       L.Routing.control({

@@ -3,9 +3,9 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
 import "leaflet-control-geocoder/dist/Control.Geocoder.js";
 import L from "leaflet";
-import LeafletGeocoder from "./../mapServices/LeafletGeocoder";
-import LeafletRoutingMachine from "./../mapServices/LeafletRoutingMachine";
-import getLocation from "./../mapServices/getLocation";
+import LeafletGeocoder from "../../mapServices/LeafletGeocoder";
+import LeafletRoutingMachine from "../../mapServices/LeafletRoutingMachine";
+import getLocation from "../../mapServices/getLocation";
 import React, { useState, useEffect } from 'react';
 
 function MapComponent() {
@@ -15,18 +15,20 @@ function MapComponent() {
         getLocation()
         .then(coordinates => setPosition(coordinates))
         .catch(() => console.error("Error al obtener posición"));
+        
     }, []);
+
     
     return (
         <>
         {position && (
-            <div style={{ height: "100vh", width: "100%" }}>  {/* Asegúrate de que el contenedor tenga tamaño */}
+            <div style={{ height: "75vh", width: "99%"}}>
             <MapContainer center={position} zoom={13} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
                 <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <LeafletGeocoder /> */
+                <LeafletGeocoder />
                 <LeafletRoutingMachine />
             </MapContainer>
             </div>

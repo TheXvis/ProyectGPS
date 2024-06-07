@@ -1,6 +1,6 @@
-import MapComponent from "../components/mapTest";
+import MapComponent from "../../components/mapComponents/mapTest";
 import React from "react";
-import Direccion from "../components/autocompletadoDirecciones";
+import Direccion from "../../components/mapComponents/autocompletadoDirecciones";
 
 function MapPage() {
 	return (
