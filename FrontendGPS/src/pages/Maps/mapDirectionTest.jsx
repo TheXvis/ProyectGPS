@@ -1,6 +1,10 @@
 import MapComponent from "../../components/mapComponents/mapTest";
 import React from "react";
-import Direccion from "../../components/mapComponents/autocompletadoDirecciones";
+
+
+import FormComponent from "./../../components/mapComponents/FormComponent";
+
+
 
 function MapPage() {
 	return (
@@ -8,7 +12,7 @@ function MapPage() {
 			<div className="md:col-span-1"></div>
 			<div className="md:col-span-4">
 				<div className="p-4">
-					<Direccion />
+					<FormComponent />
 				</div>
 				<MapComponent />
 			</div>
@@ -17,3 +21,4 @@ function MapPage() {
 }
 
 export default MapPage;
+
