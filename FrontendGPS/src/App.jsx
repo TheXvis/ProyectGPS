@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import UserPublicationsPage from './pages/User/misPublicaciones';
 import CarrierPage from './pages/carrierPage.jsx';
 import AccountPage from './pages/User/accountPage.jsx';
-
+import PagoPage from './pages/pagoPage';
 import RegisterPage from './pages/registerPage';
 
 import CarrierPage from './pages/carrierPage.jsx';
@@ -57,6 +57,7 @@ function App() {
           <Route path="/carrierPage" element={<CarrierPage/>} />
           <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
           <Route path="/registro" element={<RegisterPage/>} /> 
+          <Route path="/pago" element={<Layout><PagoPage/></Layout>} />
           <Route path="/carrierPage" element={<CarrierPage/>} />
         </Routes>
       </div>
