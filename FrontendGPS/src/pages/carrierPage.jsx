@@ -1,7 +1,7 @@
-import CarrierForm from "../components/carrierComponents/carrierForm.jsx";
+// import CarrierForm from "../components/carrierComponents/carrierForm.jsx";
 import CarrierList from "../components/carrierComponents/carrierList.jsx";
 // import ModalComponent from "../components/carrierComponents/modalComponent.jsx";
-import CarrierRegister from "../components/carrierComponents/CarrierRegister.jsx";
+import CarrierRegister from "../components/carrierComponents/carrierRegister.jsx";
 import Modal from "../components/carrierComponents/modalComponent.jsx";
 import { useState } from 'react';
 
@@ -16,7 +16,7 @@ const CarrierPage = () => {
             <h1 className="text-3xl font-semibold text-white">CarrierRegister</h1>
             <CarrierRegister />
             <h1 className="text-3xl font-semibold text-white">CarrierForm</h1>
-            <CarrierForm />
+            {/* <CarrierForm /> */}
             <h1 className="text-3xl font-semibold text-white">CarrierList</h1>
             <CarrierList />
             <h1 className="text-3xl font-semibold text-white">test modal</h1>
