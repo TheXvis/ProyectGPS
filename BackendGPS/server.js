@@ -60,6 +60,14 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/registro', async (req, res) => {
+  const { rut, password, Nombre, Apellido, Telefono, email } = req.body;
+
+  const user = new User({ rut, password, Nombre, Apellido, email, Telefono });
+  await user.save();
+
+  res.status(201).send({ message: 'User registered successfully' });
+});
 
 app.listen(port, () => {
   console.log(`Aplicación escuchando en http://localhost:${port}`);
