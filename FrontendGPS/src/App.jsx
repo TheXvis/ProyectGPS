@@ -57,11 +57,8 @@ function App() {
           <Route path="/carrierPage" element={<CarrierPage/>} />
           <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
           <Route path="/registro" element={<RegisterPage/>} /> 
-<<<<<<< HEAD
           <Route path="/pago" element={<Layout><PagoPage/></Layout>} />
-=======
           <Route path="/carrierPage" element={<CarrierPage/>} />
->>>>>>> 35ae19816047203919463c0f67fd980a50eb061d
         </Routes>
       </div>
     </Router>
