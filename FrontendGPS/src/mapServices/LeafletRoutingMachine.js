@@ -3,34 +3,19 @@ import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import { useMap } from "react-leaflet";
-import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
-import 'leaflet-control-geocoder/dist/Control.Geocoder.js';
-import getLocation from "./getLocation";
+import "leaflet-control-geocoder/dist/Control.Geocoder.css";
+import "leaflet-control-geocoder/dist/Control.Geocoder.js";
 
-
-const LeafletRoutingMachine = () => {
-  
+const LeafletRoutingMachine = ({ origin, destination }) => {
   const map = useMap();
-  let DefaultIcon = L.icon({
-    iconUrl: "/mapIcons/cargo-truck.png",
-    
-    iconSize: [50, 50],
-  });
+
   useEffect(() => {
-    //llamada a get loaction
-    getLocation()
-
-
-    // var marker1 = L.marker([-36.821123, -73.012784], { icon: DefaultIcon }).addTo(
-    //   map
-    // );
-    map.on("click", function (e) {
-      L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+    if (origin && destination) {
       L.Routing.control({
-        language: 'es',
+        language: "es",
         waypoints: [
-          L.latLng(-36.821123, -73.012784),
-          L.latLng(e.latlng.lat, e.latlng.lng),
+          L.latLng(origin), // Origen
+          L.latLng(destination), // Destino
         ],
         lineOptions: {
           styles: [
@@ -47,10 +32,10 @@ const LeafletRoutingMachine = () => {
         draggableWaypoints: false,
         fitSelectedRoutes: true,
         showAlternatives: true,
-
       }).addTo(map);
-    });
-  }, []);
+    }
+  }, [origin, destination, map]);
+
   return null;
 };
 
