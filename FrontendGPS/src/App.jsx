@@ -13,7 +13,6 @@ import AccountPage from './pages/User/accountPage.jsx';
 import PagoPage from './pages/pagoPage';
 import RegisterPage from './pages/registerPage';
 
-import CarrierPage from './pages/carrierPage.jsx';
 
 function Redirector() {
   const navigate = useNavigate();
@@ -58,7 +57,7 @@ function App() {
           <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
           <Route path="/registro" element={<RegisterPage/>} /> 
           <Route path="/pago" element={<Layout><PagoPage/></Layout>} />
-          <Route path="/carrierPage" element={<CarrierPage/>} />
+          
         </Routes>
       </div>
     </Router>
