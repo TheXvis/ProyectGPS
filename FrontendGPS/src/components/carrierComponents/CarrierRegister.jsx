@@ -1,6 +1,10 @@
 import { useState } from 'react';
 
 const CarrierRegister = () => {
+    const [showFirstForm, setShowFirstForm] = useState(true);
+    //valores para validar contraseña
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [passwordMatch, setPasswordMatch] = useState(true);
 
     const [carrierData, setCarrierData] = useState({
         rut: "",
@@ -19,8 +23,6 @@ const CarrierRegister = () => {
         email: ""
     });
 
-    const [showFirstForm, setShowFirstForm] = useState(true);
-
     const handleFirstSubmit = (event) => {
         event.preventDefault();
         setShowFirstForm(true);
@@ -32,14 +34,29 @@ const CarrierRegister = () => {
     };
 
     const handleChange = (e) => {
+        const { id, value, type, checked } = e.target;
         setCarrierData({
             ...carrierData,
-            [e.target.id]: e.target.value 
+            [id]: type === 'checkbox' ? checked : value
         });
     }
 
+    const handleConfirmPasswordChange = (e) => {
+        const value = e.target.value;
+        setConfirmPassword(value);
+        checkPasswordMatch(carrierData.password, value);
+    };
+
+    const checkPasswordMatch = (password, confirmPassword) => {
+        setPasswordMatch(password === confirmPassword);
+    };
+
     const handleSecondSubmit = async (e) => {
         e.preventDefault();
+        if (!passwordMatch) {
+            alert("Las contraseñas no coinciden");
+            return;
+        }
         try {
             const response = await fetch("http://localhost:3000/carrier/crear", {
                 method: "POST",
@@ -81,7 +98,7 @@ const CarrierRegister = () => {
                                     name='rut'
                                     onChange={handleChange}
                                     value={carrierData.rut}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Flowbite" required />
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="xx.xxx.xxx-x" pattern="\d{2}\.\d{3}\.\d{3}-[\dkK]" required />
                             </div>
                             <div>
                                 <label htmlFor="telefono" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Telefono</label>
@@ -89,7 +106,7 @@ const CarrierRegister = () => {
                                     name='telefono'
                                     onChange={handleChange}
                                     value={carrierData.telefono}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="123-45-678" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" />
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="+56912345678" pattern="\+?[0-9\s]{1,15}" />
                             </div>
                         </div>
                         <div className="mb-6">
@@ -110,16 +127,13 @@ const CarrierRegister = () => {
                         </div>
                         <div className="mb-6">
                             <label htmlFor="confirm_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirmar contraseña</label>
-                            <input type="password" id="confirm_password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="•••••••••" required />
+                            <input type="password" id="confirm_password"
+                                onChange={handleConfirmPasswordChange}
+                                value={confirmPassword}
+                                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${passwordMatch ? 'border-gray-300' : 'border-red-500'}`} placeholder="•••••••••" required />
+                                {!passwordMatch && <p className="text-red-500 text-sm">Las contraseñas no coinciden</p>}
                         </div>
                         <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Continuar</button>
-                        <button
-                            type="button"
-                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                            onClick={handleSecondForm}
-                        >
-                            Siguiente
-                        </button>
                     </div>
                 </form>
             ) : (
