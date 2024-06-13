@@ -1,9 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 
 const CarrierTable = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [carriers, setCarriers] = useState([]);
+    //paginar carriers
+    const [currentPage, setCurrentPage] = useState(1);
+    const carriersPerPage = 5;
+    const indexOfLastCarrier = currentPage * carriersPerPage;
+    const indexOfFirstCarrier = indexOfLastCarrier - carriersPerPage;
+    const currentCarriers = carriers.slice(indexOfFirstCarrier, indexOfLastCarrier);
+
+    useEffect(() => {
+        fetchCarriers().then(data => setCarriers(data));
+    }, []);
+
+    const fetchCarriers = async () => {
+        try {
+            const response = await fetch("http://localhost:3000/carrier/verTodos",
+                {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                });
+            const result = await response.json();
+            console.log(result);
+            return result;
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
 
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -48,16 +74,16 @@ const CarrierTable = () => {
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" className="px-6 py-3">
-                            Name
+                            Carrier
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Position
+                            Vehiculo
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Status
+                            Patente
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Action
+                            Acciones
                         </th>
                     </tr>
                 </thead>
@@ -90,30 +116,54 @@ const CarrierTable = () => {
                             </button>
                         </td>
                     </tr>
-                    <tr className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
 
-                        <th scope="row" className="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <img className="w-10 h-10 rounded-full" src="/docs/images/people/profile-picture-4.jpg" alt="Jese image" />
-                            <div className="ps-3">
-                                <div className="text-base font-semibold">Leslie Livingston</div>
-                                <div className="font-normal text-gray-500">leslie@flowbite.com</div>
-                            </div>
-                        </th>
-                        <td className="px-6 py-4">
-                            SEO Specialist
-                        </td>
-                        <td className="px-6 py-4">
-                            <div className="flex items-center">
-                                <div className="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Offline
-                            </div>
-                        </td>
-                        <td className="px-6 py-4">
-                            {/* <!-- Modal toggle --> */}
-                            <a href="#" type="button" data-modal-show="editUserModal" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit user</a>
-                        </td>
-                    </tr>
+                    {currentCarriers.map((carrier) => (
+                        <tr key={carrier._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                                <div className="ps-3">
+                                    <div className="text-base font-semibold">{carrier.nombre} {carrier.apellido}</div>
+                                    <div className="font-normal text-gray-500">{carrier.rut}</div>
+                                </div>
+                            </th>
+                            <td className="px-6 py-4">
+                                {carrier.vehiculo}
+                            </td>
+                            <td className="px-6 py-4">
+                                {carrier.patente}
+                            </td>
+                            <td className="px-6 py-4">
+                                {/* <!-- Modal toggle --> */}
+                                <button
+                                    type="button"
+                                    className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                    onClick={() => setIsModalOpen(true)}
+                                >
+                                    boton
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+
                 </tbody>
             </table>
+            <div>
+                <button
+                    type="button"
+                    className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
+                <button
+                    type="button"
+                    className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === Math.ceil(carriers.length / carriersPerPage)}
+                >
+                    Next
+                </button>
+            </div>
 
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-500 bg-opacity-75 p-4 md:p-8">
