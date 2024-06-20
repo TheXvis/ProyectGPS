@@ -3,6 +3,7 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 
 
+
 function PagoPage  () {
   const [coupon, setCoupon] = useState();
   const [coupons, setCoupons] = useState([]);
@@ -17,21 +18,16 @@ function PagoPage  () {
     }
   }, []);
 
-  const handleGenerateCouponClick = async () => {
-    console.log('handleGenerateCouponClick fue llamado');
-    if (!userId) return;
-    console.log('userId es válido:', userId);
-
-    const amount = 1000;
+  const handleGenerateCoupon = async () => {
+    const amount = 20000;
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 3);
+    const dueDateString = dueDate.toISOString();
   
-    // Calcula la fecha de vencimiento
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + 3);
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-    const year = currentDate.getFullYear();
-    const dueDate = `${day}-${month}-${year}`;
-    console.log('Fecha de vencimiento calculada:', dueDate);
+    const formData = new FormData();
+    formData.append('userId', userId);
+    formData.append('amount', amount);
+    formData.append('dueDate', dueDateString);
   
     // Crea el objeto FormData
     const data = {
@@ -61,7 +57,12 @@ function PagoPage  () {
       doc.setFont('helvetica', 'normal');
       doc.text(`Cupón generado para el usuario: ${data.userId}`, 20, 50);
       doc.text(`Monto: ${data.amount}`, 20, 60);
-      doc.text(`Fecha de vencimiento: ${data.dueDate}`, 20, 70);
+      const formattedDueDate = new Date(data.dueDate).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+        });
+      doc.text(`Fecha de vencimiento: ${formattedDueDate}`, 20, 70);
 
       doc.setFontSize(22);
       doc.setFont('helvetica', 'bold');
@@ -103,8 +104,24 @@ function PagoPage  () {
 
   
 
-  const handleShowCouponsClick = () => {
+  const handleShowCoupons = () => {
     setShowCoupons(!showCoupons);
+  };
+
+  const handleDeleteCoupon = async (couponId) => {
+    try {
+        const response = await fetch(`http://localhost:3000/cupon/${couponId}`, {
+            method: 'DELETE',
+        });
+      if (response.ok) {
+        // Recargar los cupones después de eliminar uno
+        setCoupons(coupons.filter(coupon => coupon._id !== couponId));
+      } else {
+        console.error('Error al eliminar el cupón');
+      }
+    } catch (error) {
+      console.error('Error al eliminar el cupón', error);
+    }
   };
 
   return (
@@ -113,14 +130,14 @@ function PagoPage  () {
         <button
           type="submit"
           className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-          onClick={handleGenerateCouponClick}
+          onClick={handleGenerateCoupon}
           style={{ marginRight: '10px' }}
         >
           Generar cupón
         </button>
         <button
           className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-          onClick={handleShowCouponsClick}
+          onClick={handleShowCoupons}
         >
           Ver cupones
         </button>
@@ -128,9 +145,14 @@ function PagoPage  () {
       {coupon && (
         <div style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <h2 style={{ marginBottom: '10px' }}>Cupón generado</h2>
-          <p><strong>UserId:</strong> {coupon.userId}</p>
-          <p><strong>Amount:</strong> {coupon.amount}</p>
-          <p><strong>DueDate:</strong> {new Date(coupon.dueDate).toLocaleDateString()}</p>
+          <p><strong>Id:</strong> {coupon._id}</p>
+          <p><strong>Rut:</strong> {coupon.userId}</p>
+          <p><strong>Monto:</strong> {coupon.amount}</p>
+          <p><strong>Fecha de Vencimiento</strong>: {new Date(coupon.dueDate).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })}</p>
         </div>
       )}
       {showCoupons && (
@@ -140,11 +162,17 @@ function PagoPage  () {
               const dueDate = new Date(coupon.dueDate);
               return (
                 <li key={coupon._id} style={{ marginBottom: '10px', backgroundColor: '#3b82f6', borderRadius: '10px', padding: '15px', color: 'white', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Cupón {index + 1}: {coupon.amount}</div>
+                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Cupón {index + 1}: {coupon._id}</div>
+                  <div>Rut: {coupon.userId}</div>
                   <div>Fecha de vencimiento: {dueDate.toLocaleDateString()}</div>
-                  <div>Cuenta para transferir: {coupon.accountToTransfer}</div>
-                  <div>Nombre de la cuenta: {coupon.accountName}</div>
+                  <div>Monto: {coupon.amount}</div>
                   <div>Estado: {coupon.isPaid ? 'Pagado' : 'No pagado'}</div>
+                 <button type="button" onClick={() => handleDeleteCoupon(coupon._id)} className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+    <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" strokelinecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+    </svg>
+    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Eliminar</span>
+</button>
                 </li>
               );
             })}
