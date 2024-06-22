@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import EditPublicationForm from '../../components/userComponents/editPublicationForm';
+
 
 function PublicationDetailsPage() {
   const { id } = useParams();
@@ -43,6 +45,9 @@ function PublicationDetailsPage() {
         <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Peso: {publication.peso}</p>
         <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Estado: {publication.estado}</p>
         <button onClick={deletePublication} className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Eliminar publicación</button>
+        <div>
+          <EditPublicationForm/>
+        </div>
       </div>
     </div>
   );
