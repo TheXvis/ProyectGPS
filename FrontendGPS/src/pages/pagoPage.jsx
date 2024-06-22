@@ -1,67 +1,65 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 
-
-
-function PagoPage  () {
+function PagoPage() {
   const [coupon, setCoupon] = useState();
   const [coupons, setCoupons] = useState([]);
   const [userId, setUserId] = useState(null);
-  const [showCoupons, setShowCoupons] = useState(false); // Añadido
+  const [showCoupons, setShowCoupons] = useState(false);
+  const [searchRut, setSearchRut] = useState('');
+  const [adminCoupons, setAdminCoupons] = useState([]);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.localStorage) {
       const rut = localStorage.getItem('rut');
-      console.log('Valor de rut en localStorage:', rut); 
+      const role = localStorage.getItem('role'); // Obtener el rol del usuario
+      console.log('Valor de rut en localStorage:', rut);
+      console.log('Rol del usuario:', role);
       setUserId(rut);
+      setUserRole(role); // Establecer el rol del usuario
     }
   }, []);
+  
+
 
   const handleGenerateCoupon = async () => {
     const amount = 20000;
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 3);
     const dueDateString = dueDate.toISOString();
-  
-    const formData = new FormData();
-    formData.append('userId', userId);
-    formData.append('amount', amount);
-    formData.append('dueDate', dueDateString);
-  
-    // Crea el objeto FormData
+
     const data = {
       userId,
       amount,
-      dueDate
+      dueDate: dueDateString,
     };
 
     try {
       const response = await axios.post('http://localhost:3000/cupon', data);
       setCoupon(response.data);
       const doc = new jsPDF();
-    
-      
-     
+
       // Titulo
       doc.setFontSize(22);
       doc.setFont('helvetica', 'bold');
       doc.text('Cupón de Pago', 105, 30, null, null, 'center');
-    
+
       // Linea para separar
       doc.setLineWidth(1);
       doc.line(20, 35, 190, 35);
-    
+
       // Detalles del cupón
       doc.setFontSize(14);
       doc.setFont('helvetica', 'normal');
       doc.text(`Cupón generado para el usuario: ${data.userId}`, 20, 50);
       doc.text(`Monto: ${data.amount}`, 20, 60);
       const formattedDueDate = new Date(data.dueDate).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-        });
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
       doc.text(`Fecha de vencimiento: ${formattedDueDate}`, 20, 70);
 
       doc.setFontSize(22);
@@ -72,10 +70,10 @@ function PagoPage  () {
       doc.setFont('helvetica', 'normal');
       doc.text(`Cuenta a transferir: ${response.data.accountToTransfer}`, 20, 110);
       doc.text(`Nombre de la cuenta: ${response.data.accountName}`, 20, 120);
-      
+
       doc.setLineWidth(0.5);
       doc.line(20, 125, 190, 125);
-      
+
       // Pie de página
       doc.setFontSize(10);
       doc.setFont('helvetica', 'italic');
@@ -97,12 +95,10 @@ function PagoPage  () {
       }
     };
 
-    if (userId) { 
+    if (userId) {
       fetchCoupons();
     }
-  }, [userId]); 
-
-  
+  }, [userId]);
 
   const handleShowCoupons = () => {
     setShowCoupons(!showCoupons);
@@ -110,17 +106,24 @@ function PagoPage  () {
 
   const handleDeleteCoupon = async (couponId) => {
     try {
-        const response = await fetch(`http://localhost:3000/cupon/${couponId}`, {
-            method: 'DELETE',
-        });
-      if (response.ok) {
+      const response = await axios.delete(`http://localhost:3000/cupon/${couponId}`);
+      if (response.status === 200) {
         // Recargar los cupones después de eliminar uno
-        setCoupons(coupons.filter(coupon => coupon._id !== couponId));
+        setCoupons(coupons.filter((coupon) => coupon._id !== couponId));
       } else {
         console.error('Error al eliminar el cupón');
       }
     } catch (error) {
       console.error('Error al eliminar el cupón', error);
+    }
+  };
+
+  const handleSearchByRut = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/cupon?userId=${searchRut}`);
+      setAdminCoupons(response.data);
+    } catch (error) {
+      console.error(`Error al buscar cupones por RUT: ${error}`);
     }
   };
 
@@ -149,10 +152,10 @@ function PagoPage  () {
           <p><strong>Rut:</strong> {coupon.userId}</p>
           <p><strong>Monto:</strong> {coupon.amount}</p>
           <p><strong>Fecha de Vencimiento</strong>: {new Date(coupon.dueDate).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })}</p>
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          })}</p>
         </div>
       )}
       {showCoupons && (
@@ -167,19 +170,62 @@ function PagoPage  () {
                   <div>Fecha de vencimiento: {dueDate.toLocaleDateString()}</div>
                   <div>Monto: {coupon.amount}</div>
                   <div>Estado: {coupon.isPaid ? 'Pagado' : 'No pagado'}</div>
-                 <button type="button" onClick={() => handleDeleteCoupon(coupon._id)} className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-    <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" strokelinecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-    </svg>
-    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Eliminar</span>
-</button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteCoupon(coupon._id)}
+                     className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  >
+                     <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+                     </svg>
+                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Eliminar</span>
+                  </button>
+
                 </li>
               );
             })}
           </ul>
         </div>
       )}
+      {userRole === 'admin' && (
+        <div style={{ marginTop: '20px' }}>
+          <h3 style={{ marginBottom: '10px' }}>Buscar cupones por RUT</h3>
+          <input
+            type="text"
+            value={searchRut}
+            onChange={(e) => setSearchRut(e.target.value)}
+            placeholder="Ingrese RUT"
+            style={{ padding: '10px', borderRadius: '5px', marginRight: '10px' }}
+          />
+          <button
+            className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={handleSearchByRut}
+          >
+            Buscar
+          </button>
+          {adminCoupons.length > 0 && (
+            <div style={{ marginTop: '20px' }}>
+              <h4>Resultados de la búsqueda</h4>
+              <ul style={{ padding: '0', listStyleType: 'none' }}>
+                {adminCoupons.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)).map((coupon, index) => {
+                  const dueDate = new Date(coupon.dueDate);
+                  return (
+                    <li key={coupon._id} style={{ marginBottom: '10px', backgroundColor: '#3b82f6', borderRadius: '10px', padding: '15px', color: 'white', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Cupón {index + 1}: {coupon._id}</div>
+                      <div>Rut: {coupon.userId}</div>
+                      <div>Fecha de vencimiento: {dueDate.toLocaleDateString()}</div>
+                      <div>Monto: {coupon.amount}</div>
+                      <div>Estado: {coupon.isPaid ? 'Pagado' : 'No pagado'}</div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
-};
+}
+
 export default PagoPage;

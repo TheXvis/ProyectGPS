@@ -7,18 +7,65 @@ require('dotenv').config();
 
 
 router.post('/crear', async (req, res) => {
-    try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const newUser = new User({
-        ...req.body,
-        password: hashedPassword,
-      });
-      const savedUser = await newUser.save();
-      res.status(201).json(savedUser);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  try {
+    const { rut, password, Nombre, Apellido, Telefono, email, role } = req.body;
+
+    console.log('Datos recibidos:', req.body); // Verifica qué datos se están recibiendo
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      rut,
+      password: hashedPassword,
+      Nombre,
+      Apellido,
+      Telefono,
+      email,
+      role: role || 'user' // Asegúrate de asignar correctamente el valor del rol recibido
+    });
+
+    console.log('Usuario creado:', newUser); // Verifica el objeto de usuario antes de guardarlo
+
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
+  } catch (error) {
+    console.error('Error al crear usuario:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/login', async (req, res) => {
+  const { rut, password } = req.body;
+
+  try {
+    // Buscar al usuario por rut en la base de datos
+    const user = await User.findOne({ rut });
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-  });
+
+    // Verificar la contraseña
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+
+    // Devolver token JWT con información del usuario (incluyendo el rol)
+    const token = jwt.sign(
+      { rut: user.rut, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    // Aquí puedes imprimir el rol para verificar
+    console.log(`Rol devuelto por el backend: ${user.role}`);
+
+    // Devolver token y rol del usuario
+    res.json({ token, role: user.role });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 router.get('/verTodos', async (req, res) => {
     try {

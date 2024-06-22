@@ -10,20 +10,21 @@ function LoginPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch('http://localhost:3000/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rut: rut, password }),
       });
       const data = await response.json();
       if (response.ok) {
-        console.log(data);
+        console.log('Rol devuelto por el backend:', data.role);
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', data.role);
         localStorage.setItem('rut', rut);
-  
+        
         const userType = localStorage.getItem('role');
-        if (userType === 'user') {
+        console.log('Rol almacenado en localStorage:', userType);
+        if (userType === 'user',  'admin') {
           navigate('/usuario-home');
         }
       } else {
