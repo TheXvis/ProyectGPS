@@ -18,7 +18,7 @@ function AccountDetails() {
     // Maneja la actualización de los detalles del usuario
     const handleUpdate = async () => {
         try {
-          const response = await axios.put('http://localhost:3000/user/' + localStorage.getItem('rut'), user);
+          const response = await axios.put('http://localhost:3000/user/editar/' + localStorage.getItem('rut'), user);
           console.log(response.data);
           alert('Detalles de la cuenta actualizados con éxito');
           setIsEditing(false);
@@ -40,6 +40,7 @@ function AccountDetails() {
   
     // Renderiza el formulario de detalles de la cuenta
     return (
+      <div  className="max-w-lg mx-auto block mb-2 p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <form className="max-w-sm mx-auto">
           <div>
             <label htmlFor="Nombre" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre:</label>
@@ -57,13 +58,14 @@ function AccountDetails() {
           </div>
 
           <div>
-            <label htmlFor="Email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email:</label>
-            <input type="text" id="Email" name="Email" value={user.email} onChange={handleChange} disabled={!isEditing} className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email:</label>
+            <input type="text" id="Email" name="email" value={user.email} onChange={handleChange} disabled={!isEditing} className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
           </div>
     
           <button className="mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" onClick={() => setIsEditing(!isEditing)}>{isEditing ? 'Cancelar' : 'Editar'}</button>
           {isEditing && <button type="button" onClick={handleUpdate}>Actualizar detalles</button>}
         </form>
+        </div>
       );
 }
   

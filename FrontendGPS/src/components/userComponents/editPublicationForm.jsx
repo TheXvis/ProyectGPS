@@ -63,9 +63,6 @@ function EditPublicationForm() {
       {isModalOpen && (
         <div className="modal" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1000 }}>
     <div className="modal-content w-70 p-10 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
-      <span onClick={() => setIsModalOpen(false)} style={{ float: 'right', cursor: 'pointer' }}>&times;</span>
-            
-            <div  className="max-w-lg mx-auto block mb-2 p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"></div>
             <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
               <div className="mb-5">
               <label htmlFor="large-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
