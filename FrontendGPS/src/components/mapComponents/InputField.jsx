@@ -22,22 +22,45 @@ function InputField({ id, placeholder, value, setValue, setMarkerPosition }) {
 		});
 	};
 
+
 	const handleMapButton = () => {
-		alert("Ubicar en el mapa functionality is not yet implemented");
+		alert("Ubicar en el mapa aun no esta implementado");
 	};
+	// const handleGpsButton = () => {
+	// 	navigator.geolocation.getCurrentPosition(
+	// 		(position) => {
+	// 			const { latitude, longitude } = position.coords;
+
+	// 			setMarkerPosition([latitude, longitude]);
+	// 		},
+	// 		(error) => {
+	// 			alert("Error obtaining GPS location");
+	// 		}
+	// 	);
+	// 	//actualizar input con la direccion del gps
+		
+	// };
 
 	const handleGpsButton = () => {
 		navigator.geolocation.getCurrentPosition(
-			(position) => {
+			async (position) => {
 				const { latitude, longitude } = position.coords;
+	
 				setMarkerPosition([latitude, longitude]);
+	
+				// Usar la API de geocodificación inversa para obtener la dirección
+				const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+				const data = await response.json();
+	
+				// Actualizar el input con la dirección obtenida
+				setValue(data.display_name);
 			},
 			(error) => {
 				alert("Error obtaining GPS location");
 			}
 		);
 	};
-
+	
 	return (
 		<div className="flex items-center relative">
 			<input
