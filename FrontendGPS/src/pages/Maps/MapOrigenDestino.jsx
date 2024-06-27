@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MapComponent from "../../components/mapComponents/mapTest";
-import FormComponent from "./../../components/mapComponents/FormComponent";
+import FormComponent from "../../components/mapComponents/FormComponent";
 
 function MapPage() {
 	const [originPosition, setOriginPosition] = useState(null);

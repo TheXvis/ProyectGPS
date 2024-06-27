@@ -8,7 +8,7 @@ import CreatePublication from './pages/User/createPublication';
 import SideBar from './components/sideBar';
 import PropTypes from 'prop-types';
 
-import MapPage from './pages/Maps/mapDirectionTest';
+import MapPage from './pages/Maps/MapOrigenDestino.jsx';
 import UserPublicationsPage from './pages/User/misPublicaciones';
 import CarrierPage from './pages/carrierPage.jsx';
 import AccountPage from './pages/User/accountPage.jsx';
