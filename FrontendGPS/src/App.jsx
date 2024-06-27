@@ -13,6 +13,8 @@ import UserPublicationsPage from './pages/User/misPublicaciones';
 import CarrierPage from './pages/carrierPage.jsx';
 import AccountPage from './pages/User/accountPage.jsx';
 
+import RegisterPage from './pages/registerPage';
+
 
 function Redirector() {
   const navigate = useNavigate();
@@ -56,6 +58,7 @@ function App() {
           <Route path="/mis-publicaciones" element={<Layout><UserPublicationsPage/></Layout>} />
           <Route path="/carrierPage" element={<CarrierPage/>} />
           <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
+          <Route path="/registro" element={<RegisterPage/>} /> 
         </Routes>
       </div>
     </Router>
