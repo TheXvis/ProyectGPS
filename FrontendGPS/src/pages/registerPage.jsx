@@ -2,55 +2,69 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function RegisterPage() {
-    const navigate = useNavigate();
-    const [rut, setRut] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [nombre, setNombre] = useState(''); 
-    const [apellido, setApellido] = useState(''); 
-    const [email, setEmail] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [telefono, setTelefono] = useState('');
-    const rutRegex = /^[0-9]{7,8}-[0-9kK]{1}$/;
-    const emailRegex = /^[\w-]+(\.[\w-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*?\.[a-z]{2,6}|(\d{1,3}\.){3}\d{1,3})(:\d{4})?$/i;
-    const telefonoRegex = /^9\d{8}$/;
+  const navigate = useNavigate();
+  const [rut, setRut] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [nombre, setNombre] = useState(''); 
+  const [apellido, setApellido] = useState(''); 
+  const [email, setEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const rutRegex = /^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}$/;
+  const emailRegex = /^[\w-]+(\.[\w-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*?\.[a-z]{2,6}|(\d{1,3}\.){3}\d{1,3})(:\d{4})?$/i;
+  const telefonoRegex = /^9\d{8}$/;
 
+  const handleRutChange = (e) => {
+    const value = e.target.value.replace(/\./g, '').replace('-', ''); // Remove dots and hyphen
+    const formattedRut = formatRut(value);
+    setRut(formattedRut);
+  };
+
+  const formatRut = (rut) => {
+    if (!rut) return '';
+    let rutBody = rut.slice(0, -1);
+    let rutDv = rut.slice(-1);
+    rutBody = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `${rutBody}-${rutDv}`;
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (!/^[a-zA-Z\s]*$/.test(nombre) || !/^[a-zA-Z\s]*$/.test(apellido)) {
       setErrorMessage("El nombre y apellido solo pueden contener letras y espacios");
       return;
-  }
+    }
     if (!rutRegex.test(rut)) {
-        setErrorMessage("Formato de RUT inválido");
-        return;
-      }
+      setErrorMessage("Formato de RUT inválido");
+      return;
+    }
     
-      if (!emailRegex.test(email)) {
-        setErrorMessage("Formato de correo electrónico inválido");
-        return;
-      }
-      if (!telefonoRegex.test(telefono)) {
-        setErrorMessage("Formato de teléfono inválido");
-        return;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Formato de correo electrónico inválido");
+      return;
+    }
+    if (!telefonoRegex.test(telefono)) {
+      setErrorMessage("Formato de teléfono inválido");
+      return;
     }
     if (password !== confirmPassword) {
-        setErrorMessage("Las contraseñas no coinciden");
+      setErrorMessage("Las contraseñas no coinciden");
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/registro', {
+      const response = await fetch('http://localhost:3000/usuario/crear', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rut: rut, password, Nombre: nombre, Apellido: apellido, email, Telefono: telefono}),
+        body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password, Nombre: nombre, Apellido: apellido, email, Telefono: telefono}),
       });
-
+  
       if (!response.ok) {
-        throw new Error(response.statusText);
+        const errorData = await response.json();
+        throw new Error(errorData.message);
       }
-
+  
       const data = await response.json();
       console.log(data);
       navigate('/login');
@@ -59,6 +73,7 @@ function RegisterPage() {
       setErrorMessage(error.message);
     }
   };
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900 min-h-screen ">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -68,7 +83,7 @@ function RegisterPage() {
               Registrar Nuevo Usuario
             </h1>
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-            <div>
+              <div>
                 <label htmlFor="nombre" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Nombre
                 </label>
@@ -107,9 +122,9 @@ function RegisterPage() {
                   name="rut"
                   id="rut"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Ingresa aqui tu rut con el formato (12345678-9)"
+                  placeholder="Ingresa aqui tu rut con el formato (12.345.678-9)"
                   value={rut}
-                  onChange={(e) => setRut(e.target.value)}
+                  onChange={handleRutChange}
                   required
                 />
               </div>
@@ -129,20 +144,20 @@ function RegisterPage() {
                 />
               </div>
               <div>
-             <label htmlFor="telefono" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-       Teléfono
-  </label>
-  <input
-    type="tel"
-    name="telefono"
-    id="telefono"
-    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    placeholder="Ingresa aqui tu número de teléfono"
-    value={telefono}
-    onChange={(e) => setTelefono(e.target.value)}
-    required
-  />
-</div>
+                <label htmlFor="telefono" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Teléfono
+                </label>
+                <input
+                  type="tel"
+                  name="telefono"
+                  id="telefono"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Ingresa aqui tu número de teléfono"
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value)}
+                  required
+                />
+              </div>
               <div>
                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Contraseña

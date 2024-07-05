@@ -6,11 +6,12 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 
+
 router.post('/crear', async (req, res) => {
   try {
     const { rut, password, Nombre, Apellido, Telefono, email, role } = req.body;
 
-    console.log('Datos recibidos:', req.body); // Verifica qué datos se están recibiendo
+    console.log('Datos recibidos:', req.body); 
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
@@ -20,7 +21,7 @@ router.post('/crear', async (req, res) => {
       Apellido,
       Telefono,
       email,
-      role: role || 'user' // Asegúrate de asignar correctamente el valor del rol recibido
+      role: role || 'user' 
     });
 
     console.log('Usuario creado:', newUser); // Verifica el objeto de usuario antes de guardarlo
@@ -29,7 +30,14 @@ router.post('/crear', async (req, res) => {
     res.status(201).json(savedUser);
   } catch (error) {
     console.error('Error al crear usuario:', error);
-    res.status(500).json({ error: error.message });
+
+    if (error.code === 11000) {
+      // Clave duplicada
+      const field = Object.keys(error.keyPattern)[0];
+      res.status(400).json({ message: `El ${field} ya está registrado` });
+    } else {
+      res.status(500).json({ message: 'Error en el servidor' });
+    }
   }
 });
 
@@ -49,14 +57,14 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // Devolver token JWT con información del usuario (incluyendo el rol)
+    // Devolver token JWT con información del usuario 
     const token = jwt.sign(
       { rut: user.rut, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    // Aquí puedes imprimir el rol para verificar
+    
     console.log(`Rol devuelto por el backend: ${user.role}`);
 
     // Devolver token y rol del usuario
