@@ -8,7 +8,7 @@ const handleLogout = () => {
 }
 
 function SideBar() {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
     <div>

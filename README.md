@@ -8,7 +8,7 @@
 	Rodrigo Parra - Jefe de proyecto
 
 ## Framework:
-	React Native - Vite - MongoDB - Git - JavaScript - Material UI
+	React Native - Vite - MongoDB - Git - JavaScript - Taildwind
 
 ## Problemática:
 #### En la situación actual existen dificultades en la comunicación entre conductores y clientes, una falta de seguimiento en tiempo real de las cargas, poca transparencia en la fijación de tarifas, la ausencia de un sistema para evaluar la calidad del servicio, nula información respecto tanto de la carga como del conductor y vehículos responsables de  transportarla, además de nulo servicio al cliente.

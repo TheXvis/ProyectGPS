@@ -7,6 +7,8 @@ import UserPage from './pages/User/userPage';
 import CreatePublication from './pages/User/createPublication';
 import SideBar from './components/sideBar';
 import PropTypes from 'prop-types';
+
+import MapPage from './pages/Maps/MapOrigenDestino.jsx';
 import UserPublicationsPage from './pages/User/misPublicaciones';
 import CarrierPage from './pages/carrierPage.jsx';
 import AccountPage from './pages/User/accountPage.jsx';
@@ -52,6 +54,7 @@ function App() {
         <Route path="/" element={<LoginPage/>} />
           <Route path="/usuario-home" element={<Layout><UserPage/></Layout>} />
           <Route path="/crear-publicacion" element={<Layout><CreatePublication/></Layout>} />
+          <Route path="/ver-mapa" element={<Layout><MapPage/></Layout>} />
           <Route path="/mis-publicaciones" element={<Layout><UserPublicationsPage/></Layout>} />
           <Route path="/carrierPage" element={<CarrierPage/>} />
           <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
