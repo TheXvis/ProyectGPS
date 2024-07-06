@@ -42,7 +42,7 @@ const handleSubmit = async (e) => {
 
     return (
         <div className="flex justify-center items-center h-screen">
-            <form className="w-1/2 bg-gray-100 p-6 rounded-lg shadow-lg" onSubmit={handleSubmit}>
+            <form className="w-1/2 bg-gray-50 p-6 rounded-lg shadow-lg" onSubmit={handleSubmit}>
                 <div className="space-y-12">
                     <div className="border-b border-gray-900/10 pb-12">
                         <h2 className="text-base font-semibold leading-7 text-gray-900">Personal ENFERMEDAAAA</h2>
