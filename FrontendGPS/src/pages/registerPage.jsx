@@ -31,7 +31,7 @@ function RegisterPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     if (!/^[a-zA-Z\s]*$/.test(nombre) || !/^[a-zA-Z\s]*$/.test(apellido)) {
       setErrorMessage("El nombre y apellido solo pueden contener letras y espacios");
       return;
@@ -54,22 +54,25 @@ function RegisterPage() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/usuario/crear', {
+      const response = await fetch('http://localhost:3000/user/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password, Nombre: nombre, Apellido: apellido, email, Telefono: telefono}),
       });
-  
+
+      // Log para depuración
+      console.log('Respuesta del servidor:', response);
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message);
       }
-  
+
       const data = await response.json();
       console.log(data);
-      navigate('/login');
+      navigate('/');
     } catch (error) {
-      console.error(error);
+      console.error('Error en el frontend:', error);
       setErrorMessage(error.message);
     }
   };

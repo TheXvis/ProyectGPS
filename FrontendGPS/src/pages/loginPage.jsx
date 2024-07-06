@@ -7,13 +7,27 @@ function LoginPage() {
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
 
+  const handleRutChange = (e) => {
+    const value = e.target.value.replace(/\./g, '').replace('-', ''); // Remove dots and hyphen
+    const formattedRut = formatRut(value);
+    setRut(formattedRut);
+  };
+
+  const formatRut = (rut) => {
+    if (!rut) return '';
+    let rutBody = rut.slice(0, -1);
+    let rutDv = rut.slice(-1);
+    rutBody = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `${rutBody}-${rutDv}`;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const response = await fetch('http://localhost:3000/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rut: rut, password }),
+        body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password }), // Enviar RUT sin puntos ni guiones
       });
       const data = await response.json();
       if (response.ok) {
@@ -24,7 +38,7 @@ function LoginPage() {
         
         const userType = localStorage.getItem('role');
         console.log('Rol almacenado en localStorage:', userType);
-        if (userType === 'user',  'admin') {
+        if (userType === 'user' || userType === 'admin') {
           navigate('/usuario-home');
         }
       } else {
@@ -53,9 +67,9 @@ function LoginPage() {
                   name="rut"
                   id="rut"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Ingresa aqui tu rut"
+                  placeholder="Ingresa aquí tu rut"
                   value={rut}
-                  onChange={(e) => setRut(e.target.value)}
+                  onChange={handleRutChange}
                   required
                 />
               </div>
@@ -67,7 +81,7 @@ function LoginPage() {
                   type="password"
                   name="password"
                   id="password"
-                  placeholder="Ingresa aqui tu contraseña"
+                  placeholder="Ingresa aquí tu contraseña"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -81,11 +95,11 @@ function LoginPage() {
                 Iniciar sesión
               </button>
               <Link
-  to="/registro"
-  className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 block mt-4"
->
-  Registrarse
-</Link>
+                to="/registro"
+                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 block mt-4"
+              >
+                Registrarse
+              </Link>
             </form>
           </div>
         </div>
