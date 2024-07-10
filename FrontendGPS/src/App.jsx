@@ -12,6 +12,8 @@ import MapPage from './pages/Maps/MapOrigenDestino.jsx';
 import UserPublicationsPage from './pages/User/misPublicaciones';
 import CarrierPage from './pages/carrierPage.jsx';
 import AccountPage from './pages/User/accountPage.jsx';
+import PublicationDetailsPage from './pages/User/publicationDetailPage.jsx';
+
 import PagoPage from './pages/pagoPage';
 import RegisterPage from './pages/registerPage';
 
@@ -61,6 +63,9 @@ function App() {
           <Route path="/registro" element={<RegisterPage/>} /> 
           <Route path="/pago" element={<Layout><PagoPage/></Layout>} />
           
+          <Route path="/registro" element={<RegisterPage/>} />
+          <Route path="/publication/details/:id" element={<Layout><PublicationDetailsPage/></Layout>} />0
+           
         </Routes>
       </div>
     </Router>
