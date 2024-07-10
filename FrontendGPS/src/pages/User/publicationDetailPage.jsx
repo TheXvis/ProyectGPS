@@ -39,7 +39,8 @@ function PublicationDetailsPage() {
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow sm:p-10 inline-block text-center">
         <h5 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">{publication.nombre}</h5>
         <img src={`http://localhost:3000/${publication.imagen}`} alt={publication.nombre} className="mx-auto w-1/4 mb-5 text-base text-gray-500 sm:text-lg dark:text-gray-400"  />
-        <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Ubicacion: {publication.ubicacion}</p>
+        <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Ubicacion de inicio: {publication.ubicacionCarga}</p>
+        <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Ubicacion de destino: {publication.ubicacionDescarga}</p>
         <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Precio: {publication.precio}</p>
         <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Tipo de mercancia: {publication.tipoMercancia}</p>
         <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Peso: {publication.peso}</p>

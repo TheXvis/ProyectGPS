@@ -34,7 +34,7 @@ function LoginPage() {
         console.log('Rol devuelto por el backend:', data.role);
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', data.role);
-        localStorage.setItem('rut', rut);
+        localStorage.setItem('rut', rut.replace(/\./g, '').replace('-', ''));
         
         const userType = localStorage.getItem('role');
         console.log('Rol almacenado en localStorage:', userType);
