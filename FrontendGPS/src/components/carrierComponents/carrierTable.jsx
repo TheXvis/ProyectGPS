@@ -1,35 +1,17 @@
 import { useState, useEffect } from 'react'
-
+import { useCarrierService } from '../../hooks/useCarrierService';
 
 const CarrierTable = () => {
+    const { carriers } = useCarrierService();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [carriers, setCarriers] = useState([]);
+    // const [carriers, setCarriers] = useState([]);
     //paginar carriers
     const [currentPage, setCurrentPage] = useState(1);
     const carriersPerPage = 5;
     const indexOfLastCarrier = currentPage * carriersPerPage;
     const indexOfFirstCarrier = indexOfLastCarrier - carriersPerPage;
     const currentCarriers = carriers.slice(indexOfFirstCarrier, indexOfLastCarrier);
-
-    useEffect(() => {
-        fetchCarriers().then(data => setCarriers(data));
-    }, []);
-
-    const fetchCarriers = async () => {
-        try {
-            const response = await fetch("http://localhost:3000/carrier/verTodos",
-                {
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" }
-                });
-            const result = await response.json();
-            console.log(result);
-            return result;
-        } catch (err) {
-            console.error(err.message);
-        }
-    }
 
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
