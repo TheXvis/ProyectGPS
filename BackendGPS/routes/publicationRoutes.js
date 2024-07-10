@@ -119,4 +119,29 @@ router.put('/cancelar/:id', async (req, res) => {
     res.status(500).send({ error: 'An error occurred', details: e });
   }
 });
+
+router.get('/filtrar/:ciudadCarga', async (req, res) => {
+  try {
+    const { ciudadCarga } = req.params;
+
+    const publications = await Publication.find({
+      ubicacionCarga: ciudadCarga,
+    });
+    res.json(publications);
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al obtener las publicaciones');
+  }
+});
+
+router.get('/ciudadesinicio', async (req, res) => {
+  try {
+      const publications = await Publication.find().distinct('ubicacionCarga');
+      res.json(publications);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
