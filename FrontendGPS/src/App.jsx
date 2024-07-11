@@ -56,7 +56,7 @@ function App() {
         <Route path="/" element={<LoginPage/>} />
           <Route path="/usuario-home" element={<Layout><UserPage/></Layout>} />
           <Route path="/crear-publicacion" element={<Layout><CreatePublication/></Layout>} />
-          <Route path="/ver-mapa" element={<Layout><MapPage/></Layout>} />
+          <Route path="/ver-mapa/" element={<Layout><MapPage/></Layout>} />
           <Route path="/mis-publicaciones" element={<Layout><UserPublicationsPage/></Layout>} />
           <Route path="/carrierPage" element={<Layout><CarrierPage/></Layout>} />
           <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
