@@ -1,11 +1,18 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');  // Necesitamos http para crear el servidor
+const { Server } = require('socket.io');  // Importar Server desde socket.io
 const app = express();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 app.use(express.json());
 app.use(cors());
 const port = 3000;
+
+const server = http.createServer(app);
+
+// Crear la instancia de Socket.IO
+const io = new Server(server);
 
 const userRoutes = require('./routes/userRoutes');
 const carrierRoutes = require('./routes/carrierRoutes');
@@ -25,7 +32,7 @@ const uri = process.env.MONGODB_URI;
 mongoose.connect(uri, {
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
-  family: 4, 
+  family: 4,
 }).then(() => console.log('Base de datos conectada')).catch(e => console.log(e));
 
 app.use('/user', userRoutes);
@@ -69,6 +76,22 @@ app.post('/registro', async (req, res) => {
   res.status(201).send({ message: 'User registered successfully' });
 });
 
-app.listen(port, () => {
+io.on('connection', (socket) => {
+  console.log('Usuario conectado')
+
+  socket.on('chat message', (body) => {
+    console.log('message: ' + body);
+    socket.broadcast.emit('chat message', {
+      body,
+      from: socket.id.slice(4)
+    });
+  });
+  
+});
+
+// app.listen(port, () => {
+//   console.log(`Aplicación escuchando en http://localhost:${port}`);
+// });
+server.listen(port, () => {
   console.log(`Aplicación escuchando en http://localhost:${port}`);
 });
