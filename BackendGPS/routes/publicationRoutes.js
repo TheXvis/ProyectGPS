@@ -112,7 +112,8 @@ router.put('/cancelar/:id', async (req, res) => {
     if (!publication) {
       return res.status(404).send({ error: 'Publication not found' });
     }
-    publication.estado = 'cancelada';
+    publication.estado = 'Disponible';
+    publication.rutCarrier = '';
     await publication.save();
     res.send("Publicacion cancelada con exito");
   } catch (e) {
