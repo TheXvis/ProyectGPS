@@ -13,6 +13,7 @@ import UserPublicationsPage from './pages/User/misPublicaciones';
 import CarrierPage from './pages/carrierPage.jsx';
 import AccountPage from './pages/User/accountPage.jsx';
 import PublicationDetailsPage from './pages/User/publicationDetailPage.jsx';
+import PublicationList from './pages/Carrier/publicationList.jsx';
 
 import PagoPage from './pages/pagoPage';
 import RegisterPage from './pages/registerPage';
@@ -62,6 +63,7 @@ function App() {
           <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
           <Route path="/registro" element={<RegisterPage/>} /> 
           <Route path="/pago" element={<Layout><PagoPage/></Layout>} />
+          <Route path="/publicationlist" element={<PublicationList/>} />
           
           <Route path="/registro" element={<RegisterPage/>} />
           <Route path="/publication/details/:id" element={<Layout><PublicationDetailsPage/></Layout>} />0

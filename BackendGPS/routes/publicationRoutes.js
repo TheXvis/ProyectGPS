@@ -155,11 +155,53 @@ router.put('/cancelar/:id', async (req, res) => {
     if (!publication) {
       return res.status(404).send({ error: 'Publication not found' });
     }
-    publication.estado = 'cancelada';
+    publication.estado = 'Disponible';
+    publication.rutCarrier = '';
     await publication.save();
     res.send("Publicacion cancelada con exito");
   } catch (e) {
     res.status(500).send({ error: 'An error occurred', details: e });
   }
 });
+
+router.put('/aceptar/:id', async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const publication = await Publication.findById(_id);
+    if (!publication) {
+      return res.status(404).send({ error: 'Publication not found' });
+    }
+    publication.estado = 'Aceptado';
+    publication.rutCarrier = '';
+    await publication.save();
+    res.send("Publicacion aceptada con exito");
+  } catch (e) {
+    res.status(500).send({ error: 'An error occurred', details: e });
+  }
+});
+
+router.get('/filtrar/:ciudadCarga', async (req, res) => {
+  try {
+    const { ciudadCarga } = req.params;
+
+    const publications = await Publication.find({
+      ubicacionCarga: ciudadCarga,
+    });
+    res.json(publications);
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al obtener las publicaciones');
+  }
+});
+
+router.get('/ciudadesinicio', async (req, res) => {
+  try {
+      const publications = await Publication.find().distinct('ubicacionCarga');
+      res.json(publications);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
