@@ -11,6 +11,7 @@ const userRoutes = require('./routes/userRoutes');
 const carrierRoutes = require('./routes/carrierRoutes');
 const publicationRoutes = require('./routes/publicationRoutes');
 const cuponRoutes = require('./routes/cuponRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 const User = require('./models/userModel');
 const Carrier = require('./models/carrierModel');
@@ -33,6 +34,7 @@ app.use('/carrier', carrierRoutes);
 app.use('/publication', publicationRoutes);
 app.use('/images', express.static('images'));
 app.use('/cupon', cuponRoutes);
+app.use('/review', reviewRoutes);
 
 app.post('/login', async (req, res) => {
   try {

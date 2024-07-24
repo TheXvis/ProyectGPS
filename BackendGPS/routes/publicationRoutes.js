@@ -148,6 +148,7 @@ router.delete('/borrar/:id', async (req, res) => {
   }
 });
 
+//rutas de estado de publicacion
 router.put('/cancelar/:id', async (req, res) => {
   const _id = req.params.id;
   try {
@@ -172,7 +173,6 @@ router.put('/aceptar/:id', async (req, res) => {
       return res.status(404).send({ error: 'Publication not found' });
     }
     publication.estado = 'Aceptado';
-    publication.rutCarrier = '';
     await publication.save();
     res.send("Publicacion aceptada con exito");
   } catch (e) {
@@ -180,6 +180,37 @@ router.put('/aceptar/:id', async (req, res) => {
   }
 });
 
+router.put('/inicioviaje/:id', async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const publication = await Publication.findById(_id);
+    if (!publication) {
+      return res.status(404).send({ error: 'Publication not found' });
+    }
+    publication.estado = 'En transito';
+    await publication.save();
+    res.send("Viaje iniciado con exito");
+  } catch (e) {
+    res.status(500).send({ error: 'An error occurred', details: e });
+  }
+});
+
+router.put('/finviaje/:id', async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const publication = await Publication.findById(_id);
+    if (!publication) {
+      return res.status(404).send({ error: 'Publication not found' });
+    }
+    publication.estado = 'Finalizado';
+    await publication.save();
+    res.send("Viaje finalizado con exito");
+  } catch (e) {
+    res.status(500).send({ error: 'An error occurred', details: e });
+  }
+});
+
+//rutas filtrado de publicaciones
 router.get('/filtrar/:ciudadCarga', async (req, res) => {
   try {
     const { ciudadCarga } = req.params;

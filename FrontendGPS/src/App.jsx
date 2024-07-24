@@ -17,6 +17,7 @@ import PublicationList from './pages/Carrier/publicationList.jsx';
 
 import PagoPage from './pages/pagoPage';
 import RegisterPage from './pages/registerPage';
+import MisReviews from './pages/Carrier/misReviews.jsx';
 
 
 function Redirector() {
@@ -66,7 +67,9 @@ function App() {
           <Route path="/publicationlist" element={<PublicationList/>} />
           
           <Route path="/registro" element={<RegisterPage/>} />
-          <Route path="/publication/details/:id" element={<Layout><PublicationDetailsPage/></Layout>} />0
+          <Route path="/publication/details/:id" element={<Layout><PublicationDetailsPage/></Layout>} />
+          <Route path='/misreviews' element={<MisReviews/>} />
+           
         </Routes>
       </div>
     </Router>
