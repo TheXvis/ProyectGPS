@@ -121,6 +121,22 @@ router.put('/cancelar/:id', async (req, res) => {
   }
 });
 
+router.put('/aceptar/:id', async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const publication = await Publication.findById(_id);
+    if (!publication) {
+      return res.status(404).send({ error: 'Publication not found' });
+    }
+    publication.estado = 'Aceptado';
+    publication.rutCarrier = '';
+    await publication.save();
+    res.send("Publicacion aceptada con exito");
+  } catch (e) {
+    res.status(500).send({ error: 'An error occurred', details: e });
+  }
+});
+
 router.get('/filtrar/:ciudadCarga', async (req, res) => {
   try {
     const { ciudadCarga } = req.params;

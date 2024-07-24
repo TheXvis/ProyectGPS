@@ -20,19 +20,10 @@ function PublicationDetailsPage() {
     fetchPublication();
   }, [id]);
 
-  const deletePublication = async () => {
-    const response = await fetch(`http://localhost:3000/publication/borrar/${id}`, {
-      method: 'DELETE',
-    });
+ 
 
-    if (response.ok) {
-        navigate('/usuario-home');
-    } else {
-      alert('Error al eliminar la publicación');
-    }
-  };
-
-  const aceptarPublicacion = async () => {
+  //funcion del carrier
+  const solucitarPublicacion = async () => {
     const carrierRut = localStorage.getItem('rut'); // Asumiendo que el RUT del transportista se guarda con la clave 'rut'
     const response = await fetch(`http://localhost:3000/carrier/aceptar/${id}/${carrierRut}`, {
       method: 'PUT',
@@ -45,17 +36,42 @@ function PublicationDetailsPage() {
     }
   };
 
+  //funcion del user
+  const deletePublication = async () => {
+    const response = await fetch(`http://localhost:3000/publication/borrar/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+        navigate('/usuario-home');
+    } else {
+      alert('Error al eliminar la publicación');
+    }
+  };
+
   const cancelarPublicacion = async() => {
     const response = await fetch(`http://localhost:3000/publication/cancelar/${id}`, {
       method: 'PUT',
     })
       if (response.ok) {
-        alert('Publicación aceptada con éxito');
+        alert('Publicación cancelada con éxito');
       } else {
         alert('Error al aceptar la publicación');
       }
     }
 
+  const aceptarPublicacion = async() => {
+      const response = await fetch(`http://localhost:3000/publication/aceptar/${id}`, {
+        method: 'PUT',
+      })
+        if (response.ok) {
+          alert('Publicación aceptada con éxito');
+        } else {
+          alert('Error al aceptar la publicación');
+        }
+  }
+
+  
 
   if (!publication) {
     return <div>Loading...</div>;
@@ -82,7 +98,7 @@ function PublicationDetailsPage() {
         {userRole === 'carrier' && (
           <>
           <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          onClick={aceptarPublicacion}>Aceptar Publicación</button>
+          onClick={solucitarPublicacion}>Aceptar Publicación</button>
           </>
           
         )}
@@ -93,6 +109,8 @@ function PublicationDetailsPage() {
       <div>
         <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">RUT del Carrier: {publication.rutCarrier}</p>
         <p className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">Nombre: {publication.nombreCarrier}</p>
+        <button onClick={aceptarPublicacion} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >Aceptar</button>
         <button onClick={cancelarPublicacion} className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Cancelar</button>
       </div>
     </div>
