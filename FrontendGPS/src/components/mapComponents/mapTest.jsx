@@ -56,8 +56,10 @@ function MapComponent({ originPosition, destinationPosition }) {
 					precio: price,
 				}
 			);
-			alert(`El viaje ha sido publicado. Precio: $${price}`);
+			//redireccionar a mis publicaciones
 			setShowModal(false); // Cerrar el modal después de publicar
+			
+
 		} catch (error) {
 			console.error("Error updating publication:", error);
 			alert("Hubo un error al publicar el viaje");
@@ -67,32 +69,6 @@ function MapComponent({ originPosition, destinationPosition }) {
 
 	return (
 		<div style={{ height: "65vh", width: "99%" }}>
-			{/* <MapContainer
-                center={position}
-                zoom={zoom}
-                scrollWheelZoom={true}
-                style={{ height: "100%", width: "100%" }}>
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {originPosition && (
-                    <Marker position={originPosition}>
-                        <Popup>Origen</Popup>
-                    </Marker>
-                )}
-                {destinationPosition && (
-                    <Marker position={destinationPosition}>
-                        <Popup>Destino</Popup>
-                    </Marker>
-                )}
-                {originPosition && destinationPosition && (
-                    <LeafletRoutingMachine
-                        origin={originPosition}
-                        destination={destinationPosition}
-                    />
-                )}
-            </MapContainer> */}
 			<MapContainer
 				center={position}
 				zoom={zoom}
