@@ -1,36 +1,29 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import LeafletRoutingMachine from "../../mapServices/LeafletRoutingMachine";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { calculatePrice } from "../../mapServices/priceCalculator";
+import L from "leaflet";
 
 function MapComponent({ originPosition, destinationPosition }) {
 	const location = useLocation();
 	const { publicationId } = location.state;
-	console.log(
-		"MapComponent:",
-		publicationId,
-		originPosition,
-		destinationPosition
-	);
 	const [position, setPosition] = useState([
 		-35.47773385588775, -71.9743932546383,
 	]); // Default position if geolocation fails
 	const [zoom, setZoom] = useState(6); // Default zoom level if no positions are set
 	const [price, setPrice] = useState(100); // Example fixed price
 	const [showModal, setShowModal] = useState(false); // State to control modal visibility
+	const [distance, setDistance] = useState(0); // Distance of the trip
+	const mapRef = useRef(null);
 
 	useEffect(() => {
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				setPosition([position.coords.latitude, position.coords.longitude]);
 				setZoom(13); // Set a higher zoom level if GPS position is available
-				console.log(
-					"GPS position:",
-					position.coords.latitude,
-					position.coords.longitude
-				);
 			},
 			() => {
 				console.error("Error obtaining location");
@@ -38,7 +31,14 @@ function MapComponent({ originPosition, destinationPosition }) {
 		);
 	}, []);
 
-	const handlePublish = () => {
+	const handleDistanceChange = (newDistance) => {
+		setDistance(newDistance);
+	};
+
+	const handlePublish = async () => {
+		//console.log("Distance:", distance);
+		const calculatedPrice = await calculatePrice(distance); // Calculate the price before showing the modal
+		setPrice(calculatedPrice);
 		setShowModal(true); // Mostrar el modal de confirmación
 	};
 
@@ -56,10 +56,8 @@ function MapComponent({ originPosition, destinationPosition }) {
 					precio: price,
 				}
 			);
-			//redireccionar a mis publicaciones
+			// Redireccionar a mis publicaciones
 			setShowModal(false); // Cerrar el modal después de publicar
-			
-
 		} catch (error) {
 			console.error("Error updating publication:", error);
 			alert("Hubo un error al publicar el viaje");
@@ -73,7 +71,9 @@ function MapComponent({ originPosition, destinationPosition }) {
 				center={position}
 				zoom={zoom}
 				scrollWheelZoom={true}
-				style={{ height: "100%", width: "100%", zIndex: 0 }}>
+				style={{ height: "100%", width: "100%", zIndex: 0 }}
+				whenCreated={(map) => (mapRef.current = map)} // Ensure mapRef is set correctly
+			>
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -92,6 +92,7 @@ function MapComponent({ originPosition, destinationPosition }) {
 					<LeafletRoutingMachine
 						origin={originPosition}
 						destination={destinationPosition}
+						onDistanceChange={handleDistanceChange} // Pass the distance change handler
 					/>
 				)}
 			</MapContainer>

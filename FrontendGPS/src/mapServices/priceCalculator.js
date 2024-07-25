@@ -1,38 +1,45 @@
-// priceCalculator.js
 import axios from "axios";
 
 const fetchFuelPrice = async () => {
-  try {
-    const response = await axios.get(
-      "https://api.bencinaenlinea.cl/api/estaciones/precios_combustibles/reporte_zonal"
-    );
-    const fuelPrices = response.data;
+    try {
+        const response = await axios.get(
+            "https://api.bencinaenlinea.cl/api/estaciones/precios_combustibles/reporte_zonal"
+        );
+        let sumaPrecios = 0;
+        let contador = 0;
+        const fuelPrices = response.data;
 
-    const dieselPrices = [
-      fuelPrices.norte.diesel,
-      fuelPrices.centro.diesel,
-      fuelPrices.metropolitana.diesel,
-      fuelPrices.sur.diesel,
-    ];
+        for (let i = 0; i < fuelPrices.data.length; i++) {
+            const objeto = fuelPrices.data[i];
+            if (objeto.combustible_nombre_largo == "Petroleo Diesel") {
+                sumaPrecios += parseFloat(objeto.precio_promedio);
+                contador++;
+            }
+        }
 
-    const averageDieselPrice =
-      dieselPrices.reduce((sum, price) => sum + price, 0) / dieselPrices.length;
-    return averageDieselPrice * 1.05; // Add 5% to the average price
-  } catch (error) {
-    console.error("Error fetching fuel prices:", error);
-    return 0;
-  }
+        if (contador > 0) {
+            const promedio = sumaPrecios / contador;
+            // console.log("Promedio de precios del diésel:", promedio);
+            return promedio;
+        } else {
+            console.log("No se encontraron precios para Petroleo Diesel");
+            return 0;
+        }
+    } catch (error) {
+        console.error("Error fetching fuel prices:", error);
+        return 0;
+    }
 };
 
 export const calculatePrice = async (distance) => {
-  const fuelPrice = await fetchFuelPrice();
-  const consumptionRate = 3; // Liters per km for a light truck
-  const driverEarningsRate = 1.2; // 20% for the driver
-  const companyEarningsRate = 1.3; // 30% for the company
-
-  const fuelCost = distance * consumptionRate * fuelPrice;
-  const driverEarnings = fuelCost * driverEarningsRate;
-  const companyEarnings = fuelCost * companyEarningsRate;
-
-  return fuelCost + driverEarnings + companyEarnings;
+    const fuelPrice = await fetchFuelPrice(); //precio de un litro en pesos
+    const fuelConsumption = 0.4; // Litros por kilómetro
+    let price = fuelPrice * fuelConsumption * distance;
+    // quitar decimales y multiplicar por 1.2
+    price = price * 1.2;
+    price = Math.round(price);
+    
+    
+    //console.log("Distancia:", distance);
+    return price;
 };
