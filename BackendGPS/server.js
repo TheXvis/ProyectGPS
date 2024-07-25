@@ -10,9 +10,12 @@ const port = 3000;
 const userRoutes = require('./routes/userRoutes');
 const carrierRoutes = require('./routes/carrierRoutes');
 const publicationRoutes = require('./routes/publicationRoutes');
+const cuponRoutes = require('./routes/cuponRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 const User = require('./models/userModel');
 const Carrier = require('./models/carrierModel');
+const cupon = require('./models/cuponModel');
 
 
 require('dotenv').config();
@@ -30,6 +33,8 @@ app.use('/user', userRoutes);
 app.use('/carrier', carrierRoutes);
 app.use('/publication', publicationRoutes);
 app.use('/images', express.static('images'));
+app.use('/cupon', cuponRoutes);
+app.use('/review', reviewRoutes);
 
 app.post('/login', async (req, res) => {
   try {
@@ -57,6 +62,14 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/registro', async (req, res) => {
+  const { rut, password, Nombre, Apellido, Telefono, email } = req.body;
+
+  const user = new User({ rut, password, Nombre, Apellido, email, Telefono });
+  await user.save();
+
+  res.status(201).send({ message: 'User registered successfully' });
+});
 
 app.listen(port, () => {
   console.log(`Aplicación escuchando en http://localhost:${port}`);
