@@ -56,7 +56,8 @@ function InputField({ id, placeholder, value, setValue, setMarkerPosition }) {
 				setValue(data.display_name);
 			},
 			(error) => {
-				alert("Error obtaining GPS location");
+				console.error("Error obtaining location");
+				console.error(error);
 			}
 		);
 	};

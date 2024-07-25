@@ -1,3 +1,4 @@
+// LeafletRoutingMachine.jsx
 import React, { useEffect } from "react";
 import L from "leaflet";
 import "leaflet-routing-machine";
@@ -6,12 +7,12 @@ import { useMap } from "react-leaflet";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
 import "leaflet-control-geocoder/dist/Control.Geocoder.js";
 
-const LeafletRoutingMachine = ({ origin, destination }) => {
+const LeafletRoutingMachine = ({ origin, destination, onDistanceChange }) => {
   const map = useMap();
 
   useEffect(() => {
     if (origin && destination) {
-      L.Routing.control({
+      const routingControl = L.Routing.control({
         language: "es",
         waypoints: [
           L.latLng(origin), // Origen
@@ -33,8 +34,25 @@ const LeafletRoutingMachine = ({ origin, destination }) => {
         fitSelectedRoutes: true,
         showAlternatives: true,
       }).addTo(map);
+      
+      routingControl.on('routesfound', function (e) {
+        const route = e.routes[0];
+        const distanceInMeters = route.summary.totalDistance; // Distancia en metros
+        const distanceInKilometers = distanceInMeters / 1000; // Convertir a kilómetros
+
+        console.log(`Calculated route distance: ${distanceInKilometers} km`); // Imprimir la distancia calculada
+
+        // Llamar a la función de callback para actualizar el estado en el componente padre
+        if (onDistanceChange) {
+          onDistanceChange(distanceInKilometers);
+        }
+      });
+
+      return () => {
+        map.removeControl(routingControl);
+      };
     }
-  }, [origin, destination, map]);
+  }, [origin, destination, map, onDistanceChange]);
 
   return null;
 };
