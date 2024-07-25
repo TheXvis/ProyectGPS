@@ -13,6 +13,8 @@ function PagoPage() {
     const [selectedCoupon, setSelectedCoupon] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [image, setImage] = useState(null);
+    const [imageCouponId, setImageCouponId] = useState(null);
 
     useEffect(() => {
         if (typeof window !== 'undefined' && window.localStorage) {
@@ -121,11 +123,26 @@ function PagoPage() {
         }
     };
 
+
+    const formatRut = (rut) => {
+        let rutValue = rut.replace(/\./g, '').replace(/-/g, '');
+    
+        if (rutValue.length > 1) {
+            let rutBody = rutValue.slice(0, -1);
+            let dv = rutValue.slice(-1);
+            rutBody = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return `${rutBody}-${dv}`;
+        }
+    
+        return rut;
+    };
+    
     const handleSearchByRut = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/cupon`, {
-                params: { userId: searchRut }
-            });
+                const formattedRut = formatRut(searchRut);
+                const response = await axios.get(`http://localhost:3000/cupon`, {
+                    params: { userId: formattedRut }
+                });
             if (response.data.length === 0) {
                 setErrorMessage('Usuario no presenta cupones');
                 setAdminCoupons([]);
@@ -165,28 +182,40 @@ function PagoPage() {
         }
     };
 
-    const handleFileUpload = async (couponId, file) => {
+    const handleFileUpload = async () => {
+        if (!image || !imageCouponId) {
+            alert('No se ha seleccionado ningún archivo o cupón.');
+            return;
+        }
+
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('image', image);
 
         try {
-            const response = await axios.post(`http://localhost:3000/cupon/upload/${couponId}`, formData, {
+            const response = await axios.post(`http://localhost:3000/cupon/${imageCouponId}/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
             if (response.status === 200) {
-                setCoupons(coupons.map(c => c._id === couponId ? { ...c, receipt: response.data.receipt } : c));
+                setCoupons(coupons.map(c => c._id === imageCouponId ? { ...c, imageUrl: response.data.imageUrl } : c));
+                setImage(null);
+                setImageCouponId(null);
+            } else {
+                console.error('Error al subir el archivo:', response.data);
+                alert('Error al subir el archivo. Por favor, inténtelo de nuevo.');
             }
         } catch (error) {
             console.error('Error al subir el archivo:', error);
+            alert('Error al subir el archivo. Por favor, inténtelo de nuevo.');
         }
     };
 
     const handleFileChange = (couponId, event) => {
         const file = event.target.files[0];
         if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
-            handleFileUpload(couponId, file);
+            setImage(file);
+            setImageCouponId(couponId);
         } else {
             alert('Por favor, sube un archivo .png o .jpg');
         }
@@ -236,6 +265,20 @@ function PagoPage() {
                                     <div>Monto: {coupon.amount}</div>
                                     <div>Estado: {coupon.isPaid ? 'Pagado' : 'No pagado'}</div>
                                     <input type="file" accept=".png, .jpg" onChange={(event) => handleFileChange(coupon._id, event)} className="mt-2" />
+                                    {imageCouponId === coupon._id && (
+                                        <button
+                                            type="button"
+                                            className="mt-2 text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                                            onClick={handleFileUpload}
+                                        >
+                                            Subir
+                                        </button>
+                                    )}
+                                    {coupon.imageUrl && (
+                                        <div>
+                                            <img src={`http://localhost:3000/${coupon.imageUrl}`} alt="Cupón" style={{ maxWidth: '300px', maxHeight: '300px', marginTop: '10px' }} />
+                                        </div>
+                                    )}
                                     {userId === 'admin' && (
                                         <button
                                             type="button"
@@ -297,7 +340,12 @@ function PagoPage() {
                                             <div>Fecha de vencimiento: {dueDate.toLocaleDateString()}</div>
                                             <div>Monto: {coupon.amount}</div>
                                             <div>Estado: {coupon.isPaid ? 'Pagado' : 'No pagado'}</div>
-                                            {userId === 'admin' && (
+                                            {coupon.imageUrl && (
+                                                <div>
+                                                    <img src={`http://localhost:3000/${coupon.imageUrl}`} alt="Cupón" style={{ maxWidth: '300px', maxHeight: '300px', marginTop: '10px' }} />
+                                                </div>
+                                            )}
+                                            {userRole === 'admin' && (
                                                 <button
                                                     type="button"
                                                     onClick={() => handleEditCoupon(coupon)}

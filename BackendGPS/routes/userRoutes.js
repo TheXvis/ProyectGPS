@@ -52,6 +52,9 @@ router.post('/login', async (req, res) => {
     }
 
     // Verificar la contraseña
+    console.log('Contraseña ingresada:', password);
+    console.log('Contraseña almacenada:', user.password);
+
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
@@ -64,7 +67,6 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    
     console.log(`Rol devuelto por el backend: ${user.role}`);
 
     // Devolver token y rol del usuario
@@ -73,6 +75,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 
 router.get('/verTodos', async (req, res) => {
@@ -131,7 +134,12 @@ router.get('/verTodos', async (req, res) => {
   router.post('/registro', async (req, res) => {
     try {
       const { rut, password, Nombre, Apellido, email, Telefono } = req.body;
+  
+      console.log('Datos recibidos:', req.body);
+  
       const hashedPassword = await bcrypt.hash(password, 10);
+      console.log('Contraseña cifrada:', hashedPassword); // Log para verificar la contraseña cifrada
+  
       const newUser = new User({
         rut,
         password: hashedPassword,
@@ -139,15 +147,24 @@ router.get('/verTodos', async (req, res) => {
         Apellido,
         email,
         Telefono
-        
       });
-      
+  
+      console.log('Usuario creado:', newUser); // Verifica el objeto de usuario antes de guardarlo
+  
       const savedUser = await newUser.save();
       res.status(201).json(savedUser);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      console.error('Error al registrar usuario:', error);
+  
+      if (error.code === 11000) {
+        // Clave duplicada
+        const field = Object.keys(error.keyPattern)[0];
+        res.status(400).json({ message: `El ${field} ya está registrado` });
+      } else {
+        res.status(500).json({ message: 'Error en el servidor' });
+      }
     }
-});
+  });
 
 module.exports = router;
 

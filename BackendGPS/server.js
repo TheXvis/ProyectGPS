@@ -1,10 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
 app.use(express.json());
 app.use(cors());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Asegúrate de servir la carpeta de subidas
+
 const port = 3000;
 
 const userRoutes = require('./routes/userRoutes');
@@ -12,28 +18,22 @@ const carrierRoutes = require('./routes/carrierRoutes');
 const publicationRoutes = require('./routes/publicationRoutes');
 const cuponRoutes = require('./routes/cuponRoutes');
 
-const User = require('./models/userModel');
-const Carrier = require('./models/carrierModel');
-const cupon = require('./models/cuponModel');
-
-
-require('dotenv').config();
-
-const mongoose = require('mongoose');
+// Conexión a la base de datos
 const uri = process.env.MONGODB_URI;
-
 mongoose.connect(uri, {
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
-  family: 4, 
+  family: 4,
 }).then(() => console.log('Base de datos conectada')).catch(e => console.log(e));
 
+// Uso de rutas
 app.use('/user', userRoutes);
 app.use('/carrier', carrierRoutes);
 app.use('/publication', publicationRoutes);
-app.use('/images', express.static('images'));
 app.use('/cupon', cuponRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Ruta de login
 app.post('/login', async (req, res) => {
   try {
     let user = await User.findOne({ rut: req.body.rut });
@@ -60,6 +60,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Ruta de registro
 app.post('/registro', async (req, res) => {
   const { rut, password, Nombre, Apellido, Telefono, email } = req.body;
 
@@ -69,6 +70,19 @@ app.post('/registro', async (req, res) => {
   res.status(201).send({ message: 'User registered successfully' });
 });
 
+
+
+// Middleware para manejar errores
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({
+    error: {
+      message: err.message
+    }
+  });
+});
+
+// Iniciar servidor
 app.listen(port, () => {
   console.log(`Aplicación escuchando en http://localhost:${port}`);
 });
