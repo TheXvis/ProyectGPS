@@ -10,4 +10,5 @@ router.put('/editar/:rut', carrierController.updateCarrier);
 router.delete('/borrar/:rut', carrierController.deleteCarrier);
 router.put('/aceptar/:publicationId/:carrierRut', carrierController.aceptarPublicacion);
 router.put('/cambiarDisp/:rut', carrierController.cambiarDisp);
+router.post('/login', carrierController.loginCarrier);
 module.exports = router;

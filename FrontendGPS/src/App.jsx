@@ -58,7 +58,7 @@ function App() {
           <Route path="/crear-publicacion" element={<Layout><CreatePublication/></Layout>} />
           <Route path="/ver-mapa" element={<Layout><MapPage/></Layout>} />
           <Route path="/mis-publicaciones" element={<Layout><UserPublicationsPage/></Layout>} />
-          <Route path="/carrierPage" element={<CarrierPage/>} />
+          <Route path="/carrierPage" element={<Layout><CarrierPage/></Layout>} />
           <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
           <Route path="/registro" element={<RegisterPage/>} /> 
           <Route path="/pago" element={<Layout><PagoPage/></Layout>} />

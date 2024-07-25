@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 app.use(express.json());
 app.use(cors());
 const port = 3000;
+const users = {}
 
 const server = http.createServer(app);
 
@@ -79,12 +80,53 @@ app.post('/registro', async (req, res) => {
 io.on('connection', (socket) => {
   console.log('Usuario conectado')
 
-  socket.on('chat message', (body) => {
-    console.log('message: ' + body);
-    socket.broadcast.emit('chat message', {
-      body,
-      from: socket.id.slice(4)
-    });
+  socket.on('join', ({ token }) => {
+    users[token] = socket.id;
+    io.emit('users', Object.keys(users));
+  });
+
+  socket.on('disconnect', () => {
+    for (const [token, id] of Object.entries(users)) {
+      if (id === socket.id) {
+        delete users[token];
+        break;
+      }
+    }
+    io.emit('users', Object.keys(users));
+  });
+
+  // socket.on('chat message', (body) => {
+  //   console.log('message: ' + body);
+  //   socket.broadcast.emit('chat message', {
+  //     body,
+  //     from: socket.id.slice(4)
+  //   });
+  // });
+  socket.on('chat message', ({ message, token, partnerToken }) => {
+    const partnerSocketId = users[partnerToken];
+    if (partnerSocketId) {
+      io.to(partnerSocketId).emit('chat message', {
+        body: message,
+        from: token,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: 'Delivered'
+      });
+    }
+  });
+
+  socket.on('join', ({ token }) => {
+    users[token] = socket.id;
+    io.emit('users', Object.keys(users));
+  });
+
+  socket.on('disconnect', () => {
+    for (const [token, id] of Object.entries(users)) {
+      if (id === socket.id) {
+        delete users[token];
+        break;
+      }
+    }
+    io.emit('users', Object.keys(users));
   });
   
 });

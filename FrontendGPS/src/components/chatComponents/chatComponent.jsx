@@ -3,9 +3,16 @@ import { useState, useEffect } from 'react';
 
 const socket = io('/');
 
-const ChatComponent = () => {
+//205150391 password 
+
+
+const ChatComponent = ({ partnerToken }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const token = localStorage.getItem('token');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,24 +20,59 @@ const ChatComponent = () => {
       body: message,
       from: 'TU',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'Delivered' // Asumiendo que quieres mostrar el estado de entrega
+      status: 'Delivered' // mostrar el estado de entrega
     };
     setMessages([...messages, newMessage]);
-    socket.emit('chat message', message);
+    // socket.emit('chat message', message);
+    socket.emit('chat message', { message, token, partnerToken: selectedUser });
   };
 
+  // useEffect(() => {
+  //   socket.on('chat message', receiveMessage);
+  //   return () => {
+  //     socket.off('chat message', receiveMessage);
+  //   };
+  // }, []);
+
   useEffect(() => {
+    socket.emit('join', { token });
+
+    socket.on('users', (users) => {
+      setUsers(users);
+    });
+
     socket.on('chat message', receiveMessage);
+
     return () => {
+      socket.off('users');
       socket.off('chat message', receiveMessage);
     };
-  }, []);
+
+    // socket.on('chat message', receiveMessage);
+    // return () => {
+    //   socket.off('chat message', receiveMessage);
+    // };
+  }, [token]);
 
   const receiveMessage = (msg) => setMessages((state) => [...state, msg]);
 
   return (
     <>
       <div>ChatComponent</div>
+      <div>
+        <p className="text-xl font-semibold text-blue-600/100 dark:text-blue-500/100">Usuarios Conectados</p>
+        <ul>
+          {users.map((user) => (
+            <li
+              key={user}
+              onClick={() => setSelectedUser(user)}
+              className="bg-white p-2 rounded-lg shadow-md hover:bg-gray-100"
+            >
+              {user.length > 10 ? `${user.substring(0, 10)}...` : user}
+            </li>
+          ))}
+        </ul>
+      </div>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -48,21 +90,24 @@ const ChatComponent = () => {
           enviar
         </button>
       </form>
-      <ul>
-        {messages.map((msg, index) => (
-          <li key={index} className="flex items-start gap-2.5">
-            <div className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-xl dark:bg-gray-700">
-              <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">{msg.from}</span>
-                <span className="text-sm font-normal text-gray-500 dark:text-gray-400">{msg.timestamp}</span>
+      <div className="messages-container overflow-y-auto h-64">
+        <ul>
+          {messages.map((msg, index) => (
+            <li key={index} className="flex items-start gap-2.5">
+              <div className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-xl dark:bg-gray-700">
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {msg.from.length > 5 ? `${msg.from.substring(0, 5)}...` : msg.from}
+                  </span>
+                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400">{msg.timestamp}</span>
+                </div>
+                <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{msg.body}</p>
+                <span className="text-sm font-normal text-gray-500 dark:text-gray-400">{msg.status}</span>
               </div>
-              <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{msg.body}</p>
-              <span className="text-sm font-normal text-gray-500 dark:text-gray-400">{msg.status}</span>
-            </div>
-            {/* Aquí puedes agregar el botón y el menú desplegable si es necesario */}
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 };
