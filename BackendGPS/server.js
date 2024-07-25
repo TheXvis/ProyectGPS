@@ -16,7 +16,8 @@ const port = 3000;
 const userRoutes = require('./routes/userRoutes');
 const carrierRoutes = require('./routes/carrierRoutes');
 const publicationRoutes = require('./routes/publicationRoutes');
-const cuponRoutes = require('./routes/cuponRoutes');
+const cuponRoutes = require('./routes/cuponRoutes'); // Asegúrate de que esta ruta está definida correctamente
+const reviewRoutes = require('./routes/reviewRoutes');
 
 // Conexión a la base de datos
 const uri = process.env.MONGODB_URI;

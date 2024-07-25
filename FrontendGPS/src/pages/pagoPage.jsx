@@ -126,23 +126,23 @@ function PagoPage() {
 
     const formatRut = (rut) => {
         let rutValue = rut.replace(/\./g, '').replace(/-/g, '');
-    
+
         if (rutValue.length > 1) {
             let rutBody = rutValue.slice(0, -1);
             let dv = rutValue.slice(-1);
             rutBody = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             return `${rutBody}-${dv}`;
         }
-    
+
         return rut;
     };
-    
+
     const handleSearchByRut = async () => {
         try {
-                const formattedRut = formatRut(searchRut);
-                const response = await axios.get(`http://localhost:3000/cupon`, {
-                    params: { userId: formattedRut }
-                });
+            const formattedRut = formatRut(searchRut);
+            const response = await axios.get(`http://localhost:3000/cupon`, {
+                params: { userId: formattedRut }
+            });
             if (response.data.length === 0) {
                 setErrorMessage('Usuario no presenta cupones');
                 setAdminCoupons([]);
@@ -182,14 +182,9 @@ function PagoPage() {
         }
     };
 
-    const handleFileUpload = async () => {
-        if (!image || !imageCouponId) {
-            alert('No se ha seleccionado ningún archivo o cupón.');
-            return;
-        }
-
+    const handleFileUpload = async (couponId, file) => {
         const formData = new FormData();
-        formData.append('image', image);
+        formData.append('file', file);
 
         try {
             const response = await axios.post(`http://localhost:3000/cupon/${imageCouponId}/upload`, formData, {
@@ -286,8 +281,8 @@ function PagoPage() {
                                             className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                                         >
                                             <svg className="w-6 h-6 text-gray-800 dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                <path fillRule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clipRule="evenodd"/>
-                                                <path fillRule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clipRule="evenodd"/>
+                                                <path fillRule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clipRule="evenodd" />
+                                                <path fillRule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clipRule="evenodd" />
                                             </svg>
                                             <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Editar</span>
                                         </button>
@@ -340,20 +335,15 @@ function PagoPage() {
                                             <div>Fecha de vencimiento: {dueDate.toLocaleDateString()}</div>
                                             <div>Monto: {coupon.amount}</div>
                                             <div>Estado: {coupon.isPaid ? 'Pagado' : 'No pagado'}</div>
-                                            {coupon.imageUrl && (
-                                                <div>
-                                                    <img src={`http://localhost:3000/${coupon.imageUrl}`} alt="Cupón" style={{ maxWidth: '300px', maxHeight: '300px', marginTop: '10px' }} />
-                                                </div>
-                                            )}
-                                            {userRole === 'admin' && (
+                                            {userId === 'admin' && (
                                                 <button
                                                     type="button"
                                                     onClick={() => handleEditCoupon(coupon)}
                                                     className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                                                 >
                                                     <svg className="w-6 h-6 text-gray-800 dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path fillRule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clipRule="evenodd"/>
-                                                        <path fillRule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clipRule="evenodd"/>
+                                                        <path fillRule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clipRule="evenodd" />
+                                                        <path fillRule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clipRule="evenodd" />
                                                     </svg>
                                                     <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Editar</span>
                                                 </button>
