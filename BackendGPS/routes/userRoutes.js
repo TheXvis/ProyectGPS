@@ -45,31 +45,35 @@ router.post('/login', async (req, res) => {
   const { rut, password } = req.body;
 
   try {
-    // Buscar al usuario por rut en la base de datos
+    console.log(`Intentando iniciar sesión con RUT: ${rut}`); // Log para el RUT
+
     const user = await User.findOne({ rut });
     if (!user) {
+      console.log('Usuario no encontrado');
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    // Verificar la contraseña
+    console.log(`Usuario encontrado: ${JSON.stringify(user)}`); // Log para el usuario encontrado
+
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
+      console.log('Contraseña incorrecta');
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // Devolver token JWT con información del usuario 
+    console.log(`Contraseña correcta. Rol del usuario: ${user.role}`); // Log para la contraseña correcta y el rol del usuario
+
     const token = jwt.sign(
       { rut: user.rut, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    
-    console.log(`Rol devuelto por el backend: ${user.role}`);
+    console.log(`Token generado para el usuario con rol: ${user.role}`); // Log para el token generado
 
-    // Devolver token y rol del usuario
     res.json({ token, role: user.role });
   } catch (error) {
+    console.error(`Error en el endpoint de login: ${error.message}`); // Log para errores
     res.status(500).json({ error: error.message });
   }
 });

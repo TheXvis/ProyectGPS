@@ -6,6 +6,7 @@ const CouponSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
     dueDate: { type: Date, required: true },
     isPaid: { type: Boolean, default: false },
+    receipt: String,
     accountToTransfer: { type: String, default: '20618792-1' }, 
     accountName: { type: String, default: 'Rodrigo Beltran' } 
 });

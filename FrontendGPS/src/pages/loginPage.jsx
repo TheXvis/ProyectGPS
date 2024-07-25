@@ -24,7 +24,7 @@ function LoginPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch('http://localhost:3000/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password }), // Enviar RUT sin puntos ni guiones
@@ -34,15 +34,12 @@ function LoginPage() {
         console.log('Rol devuelto por el backend:', data.role);
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', data.role);
-        localStorage.setItem('rut', rut.replace(/\./g, '').replace('-', ''));
+        localStorage.setItem('rut', rut);
         
         const userType = localStorage.getItem('role');
         console.log('Rol almacenado en localStorage:', userType);
         if (userType === 'user' || userType === 'admin') {
           navigate('/usuario-home');
-        }
-        if (userType === 'carrier') {
-          navigate('/publicationlist');
         }
       } else {
         console.error(data);
