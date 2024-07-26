@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import Button from "./Button";
 import L from "leaflet";
 import "leaflet-control-geocoder";
@@ -22,36 +22,23 @@ function InputField({ id, placeholder, value, setValue, setMarkerPosition }) {
 		});
 	};
 
-
 	const handleMapButton = () => {
 		alert("Ubicar en el mapa aun no esta implementado");
 	};
-	// const handleGpsButton = () => {
-	// 	navigator.geolocation.getCurrentPosition(
-	// 		(position) => {
-	// 			const { latitude, longitude } = position.coords;
-
-	// 			setMarkerPosition([latitude, longitude]);
-	// 		},
-	// 		(error) => {
-	// 			alert("Error obtaining GPS location");
-	// 		}
-	// 	);
-	// 	//actualizar input con la direccion del gps
-		
-	// };
 
 	const handleGpsButton = () => {
 		navigator.geolocation.getCurrentPosition(
 			async (position) => {
 				const { latitude, longitude } = position.coords;
-	
+
 				setMarkerPosition([latitude, longitude]);
-	
+
 				// Usar la API de geocodificación inversa para obtener la dirección
-				const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+				const response = await fetch(
+					`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+				);
 				const data = await response.json();
-	
+
 				// Actualizar el input con la dirección obtenida
 				setValue(data.display_name);
 			},
@@ -61,7 +48,7 @@ function InputField({ id, placeholder, value, setValue, setMarkerPosition }) {
 			}
 		);
 	};
-	
+
 	return (
 		<div className="flex items-center relative">
 			<input
@@ -83,11 +70,7 @@ function InputField({ id, placeholder, value, setValue, setMarkerPosition }) {
 				title="Ubicar en el mapa"
 				onClick={handleMapButton}
 			/>
-			<Button
-				iconSrc="gps"
-				title="Ubicar con GPS"
-				onClick={handleGpsButton}
-			/>
+			<Button iconSrc="gps" title="Ubicar con GPS" onClick={handleGpsButton} />
 		</div>
 	);
 }

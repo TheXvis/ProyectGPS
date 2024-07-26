@@ -20,7 +20,7 @@ const fetchFuelPrice = async () => {
         if (contador > 0) {
             const promedio = sumaPrecios / contador;
             // console.log("Promedio de precios del diésel:", promedio);
-            return promedio;
+            return promedio*1.2;
         } else {
             console.log("No se encontraron precios para Petroleo Diesel");
             return 0;

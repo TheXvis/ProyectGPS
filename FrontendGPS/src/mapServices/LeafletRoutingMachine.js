@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 // LeafletRoutingMachine.jsx
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
