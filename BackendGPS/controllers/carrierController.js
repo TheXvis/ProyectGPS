@@ -89,7 +89,7 @@ const aceptarPublicacion = async (req, res) => {
             return res.status(404).send({ error: 'Publication not found' });
         }
         publication.rutCarrier = carrier.rut;
-        publication.estado = 'aceptada';
+        publication.estado = 'Pendiente';
         await publication.save();
         res.send("Publicacion aceptada con exito");
     } catch (e) {

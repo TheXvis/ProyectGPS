@@ -39,6 +39,49 @@ router.post('/crear', upload.single('imagen'), async (req, res) => {
   }
 });
 
+
+// router.put('/:id', async (req, res) => {
+//   const { id } = req.params;
+//   const { ubicacionCarga, ubicacionDescarga, precio } = req.body;
+//   // console.log(req.body);
+
+//   try {
+//     const publication = await Publication.findByIdAndUpdate(id, {
+//       ubicacionCarga,
+//       ubicacionDescarga,
+//       precio,
+//     }, { new: true });
+//     res.status(200).json(publication);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Error updating publication' });
+//     // console.log(error);
+//   }
+// });
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { ubicacionCarga, ubicacionDescarga, precio } = req.body;
+
+  try {
+    const publication = await Publication.findByIdAndUpdate(id, {
+      ubicacionCarga,
+      ubicacionDescarga,
+      precio,
+    }, { new: true });
+
+    // Verificar si se encontró la publicación y se actualizó correctamente
+    if (!publication) {
+      return res.status(404).json({ error: 'Publication not found' });
+    }
+
+    res.status(200).json(publication);
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating publication' });
+    console.error('Error updating publication:', error);
+  }
+});
+
+
+
 router.get('/images/:filename', (req, res) => {
   res.sendFile(path.resolve('images', req.params.filename));
 });
@@ -105,6 +148,7 @@ router.delete('/borrar/:id', async (req, res) => {
   }
 });
 
+//rutas de estado de publicacion
 router.put('/cancelar/:id', async (req, res) => {
   const _id = req.params.id;
   try {
@@ -112,11 +156,83 @@ router.put('/cancelar/:id', async (req, res) => {
     if (!publication) {
       return res.status(404).send({ error: 'Publication not found' });
     }
-    publication.estado = 'cancelada';
+    publication.estado = 'Disponible';
+    publication.rutCarrier = '';
     await publication.save();
     res.send("Publicacion cancelada con exito");
   } catch (e) {
     res.status(500).send({ error: 'An error occurred', details: e });
   }
 });
+
+router.put('/aceptar/:id', async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const publication = await Publication.findById(_id);
+    if (!publication) {
+      return res.status(404).send({ error: 'Publication not found' });
+    }
+    publication.estado = 'Aceptado';
+    await publication.save();
+    res.send("Publicacion aceptada con exito");
+  } catch (e) {
+    res.status(500).send({ error: 'An error occurred', details: e });
+  }
+});
+
+router.put('/inicioviaje/:id', async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const publication = await Publication.findById(_id);
+    if (!publication) {
+      return res.status(404).send({ error: 'Publication not found' });
+    }
+    publication.estado = 'En transito';
+    await publication.save();
+    res.send("Viaje iniciado con exito");
+  } catch (e) {
+    res.status(500).send({ error: 'An error occurred', details: e });
+  }
+});
+
+router.put('/finviaje/:id', async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const publication = await Publication.findById(_id);
+    if (!publication) {
+      return res.status(404).send({ error: 'Publication not found' });
+    }
+    publication.estado = 'Finalizado';
+    await publication.save();
+    res.send("Viaje finalizado con exito");
+  } catch (e) {
+    res.status(500).send({ error: 'An error occurred', details: e });
+  }
+});
+
+//rutas filtrado de publicaciones
+router.get('/filtrar/:ciudadCarga', async (req, res) => {
+  try {
+    const { ciudadCarga } = req.params;
+
+    const publications = await Publication.find({
+      ubicacionCarga: ciudadCarga,
+    });
+    res.json(publications);
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al obtener las publicaciones');
+  }
+});
+
+router.get('/ciudadesinicio', async (req, res) => {
+  try {
+      const publications = await Publication.find().distinct('ubicacionCarga');
+      res.json(publications);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

@@ -128,6 +128,7 @@ router.get('/verTodos', async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+
   router.post('/registro', async (req, res) => {
     try {
       const { rut, password, Nombre, Apellido, email, Telefono } = req.body;
@@ -148,6 +149,8 @@ router.get('/verTodos', async (req, res) => {
       res.status(500).json({ error: error.message });
     }
 });
+
+
 
 module.exports = router;
 
