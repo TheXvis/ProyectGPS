@@ -35,63 +35,57 @@ function SideBar() {
 			{/* Navbar */}
 			<nav className="bg-gray-800 p-4 text-white">
 				<div className="container mx-auto flex justify-between items-center">
-					<div className="flex items-center">
-						{/* Espacio para mantener el layout */}
-						<div className="w-8 mr-4"></div>
-						<span className="text-xl font-semibold z-50">Mi Aplicación</span>
+					<div className="flex items-center flex-1">
+						{/* Botón para alternar el sidebar */}
+						<button
+							id="sidebarToggle"
+							onClick={toggleSidebar}
+							className={`z-50 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors ${
+								isSidebarOpen
+									? "text-gray-800 bg-white"
+									: "text-white bg-gray-800"
+							}`}
+							aria-label={isSidebarOpen ? "Cerrar menú" : "Abrir menú"}>
+							<svg
+								className="w-5 h-5"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+								xmlns="http://www.w3.org/2000/svg">
+								{isSidebarOpen ? (
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M6 18L18 6M6 6l12 12"
+									/>
+								) : (
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M4 6h16M4 12h16M4 18h16"
+									/>
+								)}
+							</svg>
+						</button>
+						<span className="ml-4 text-xl font-semibold z-50">App Fletes</span>
 					</div>
-					<div>
-						{/* Otros enlaces del navbar */}
+					<div className="flex-1 text-right">
+						{/* Elemento central */}
 						<Link
-							to="/"
+							to="/usuario-home"
 							className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
-							Inicio
-						</Link>
-						<Link
-							to="/perfil"
-							className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
-							Perfil
+							Soporte
 						</Link>
 					</div>
 				</div>
 			</nav>
 
-			{/* Botón para alternar el sidebar */}
-			<button
-				id="sidebarToggle"
-				onClick={toggleSidebar}
-				className={`fixed top-4 left-4 z-50 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors ${
-					isSidebarOpen ? "text-gray-800 bg-white" : "text-white bg-gray-800"
-				}`}
-				aria-label={isSidebarOpen ? "Cerrar menú" : "Abrir menú"}>
-				<svg
-					className="w-5 h-5"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-					xmlns="http://www.w3.org/2000/svg">
-					{isSidebarOpen ? (
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					) : (
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-							d="M4 6h16M4 12h16M4 18h16"
-						/>
-					)}
-				</svg>
-			</button>
-
 			{/* Sidebar */}
 			<aside
 				ref={sidebarRef}
-				className={`fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform ${
+				className={`fixed top-0 left-0 z-40 w-80 h-screen pt-16 transition-transform transform ${
 					isSidebarOpen ? "translate-x-0" : "-translate-x-full"
 				} bg-white dark:bg-gray-800 overflow-y-auto`}
 				aria-label="Sidebar">
