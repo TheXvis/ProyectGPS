@@ -3,7 +3,7 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 
 function PagoPage() {
-    const [coupon, setCoupon] = useState();
+    const [coupon, setCoupon] = useState(null);
     const [coupons, setCoupons] = useState([]);
     const [userId, setUserId] = useState(null);
     const [showCoupons, setShowCoupons] = useState(false);
@@ -14,11 +14,19 @@ function PagoPage() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
+    const [publications, setPublications] = useState([]);
+    const [selectedPublication, setSelectedPublication] = useState(null);
+
+    // Función para limpiar el RUT
+    const cleanRut = (rut) => {
+        return rut.replace(/[.\-]/g, '');
+    };
 
     useEffect(() => {
         if (typeof window !== 'undefined' && window.localStorage) {
-            const rut = localStorage.getItem('rut');
+            let rut = localStorage.getItem('rut');
             const role = localStorage.getItem('role');
+            rut = cleanRut(rut);
             console.log('Valor de rut en localStorage:', rut);
             console.log('Rol del usuario:', role);
             setUserId(rut);
@@ -26,8 +34,29 @@ function PagoPage() {
         }
     }, []);
 
+    useEffect(() => {
+        const fetchPublications = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3000/publication/ver/${userId}`);
+                setPublications(response.data);
+            } catch (error) {
+                console.error(`Error al obtener las publicaciones: ${error}`);
+            }
+        };
+
+        if (userId) {
+            fetchPublications();
+        }
+    }, [userId]);
+
     const handleGenerateCoupon = async () => {
-        const amount = 20000;
+        if (!selectedPublication) {
+            alert('Por favor, selecciona una publicación.');
+            return;
+        }
+
+        const { precio, _id } = selectedPublication;
+        const amount = precio;
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + 3);
         const dueDateString = dueDate.toISOString();
@@ -36,6 +65,7 @@ function PagoPage() {
             userId,
             amount,
             dueDate: dueDateString,
+            publicationId: _id,
         };
 
         try {
@@ -125,7 +155,7 @@ function PagoPage() {
     const handleSearchByRut = async () => {
         try {
             const response = await axios.get(`http://localhost:3000/cupon`, {
-                params: { userId: searchRut }
+                params: { userId: cleanRut(searchRut) }
             });
             if (response.data.length === 0) {
                 setErrorMessage('Usuario no presenta cupones');
@@ -227,6 +257,24 @@ function PagoPage() {
                         month: '2-digit',
                         year: 'numeric',
                     })}</p>
+                </div>
+            )}
+            {publications.length > 0 && (
+                <div style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+
+                    <select
+                        value={selectedPublication ? selectedPublication._id : ''}
+                        onChange={(e) => {
+                            const selected = publications.find(p => p._id === e.target.value);
+                            setSelectedPublication(selected);
+                        }}
+                        style={{ width: '100%', padding: '10px', borderRadius: '5px' }}
+                    >
+                        <option value="" disabled>Seleccionar una publicación</option>
+                        {publications.map((publication) => (
+                            <option key={publication._id} value={publication._id}>{publication.nombre} - {publication.precio}</option>
+                        ))}
+                    </select>
                 </div>
             )}
             {showCoupons && (

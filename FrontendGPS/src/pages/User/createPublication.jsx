@@ -10,11 +10,15 @@ function CreatePublicationForm() {
 	const [peso, setPeso] = useState("");
 	const navigate = useNavigate();
 
+	const normalizeRut = (rut) => {
+		return rut.replace(/\./g, '').replace(/-/g, '');
+	};
+
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		const formData = new FormData();
-		formData.append("rutUser", rutUser);
+		formData.append("rutUser", normalizeRut(rutUser));
 		formData.append("nombre", nombre);
 		formData.append("tipoMercancia", tipoMercancia);
 		formData.append("imagen", imagen);
@@ -31,12 +35,10 @@ function CreatePublicationForm() {
 				}
 			);
 			console.log(response.data);
-			console.log(response.data._id);
-			// alert("Publicación creada exitosamente");
 			navigate("/ver-mapa", { state: { publicationId: response.data._id } });
 		} catch (error) {
 			console.error(error);
-			alert("Error");
+			alert("Error al crear la publicación");
 		}
 	};
 

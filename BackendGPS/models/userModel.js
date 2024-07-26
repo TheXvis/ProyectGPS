@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   Telefono: { type: String, required: true },
   email: { type: String, required: true },
   publicaciones: { type: String },
-  role: { type: String, required: true, default: 'admin' },
+  role: { type: String, required: true, default: 'user' },
 });
 
 const User = mongoose.model('userModel', userSchema);
