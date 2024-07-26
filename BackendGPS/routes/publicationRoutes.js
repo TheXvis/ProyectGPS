@@ -39,6 +39,49 @@ router.post('/crear', upload.single('imagen'), async (req, res) => {
   }
 });
 
+
+// router.put('/:id', async (req, res) => {
+//   const { id } = req.params;
+//   const { ubicacionCarga, ubicacionDescarga, precio } = req.body;
+//   // console.log(req.body);
+
+//   try {
+//     const publication = await Publication.findByIdAndUpdate(id, {
+//       ubicacionCarga,
+//       ubicacionDescarga,
+//       precio,
+//     }, { new: true });
+//     res.status(200).json(publication);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Error updating publication' });
+//     // console.log(error);
+//   }
+// });
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { ubicacionCarga, ubicacionDescarga, precio } = req.body;
+
+  try {
+    const publication = await Publication.findByIdAndUpdate(id, {
+      ubicacionCarga,
+      ubicacionDescarga,
+      precio,
+    }, { new: true });
+
+    // Verificar si se encontró la publicación y se actualizó correctamente
+    if (!publication) {
+      return res.status(404).json({ error: 'Publication not found' });
+    }
+
+    res.status(200).json(publication);
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating publication' });
+    console.error('Error updating publication:', error);
+  }
+});
+
+
+
 router.get('/images/:filename', (req, res) => {
   res.sendFile(path.resolve('images', req.params.filename));
 });
