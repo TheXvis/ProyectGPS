@@ -7,8 +7,6 @@ import { useLocation } from "react-router-dom";
 import { calculatePrice } from "../../mapServices/priceCalculator";
 import { useNavigate } from "react-router-dom";
 
-//import L from "leaflet";
-
 function MapComponent({ originPosition, destinationPosition }) {
 	const location = useLocation();
 	const { publicationId } = location.state;
@@ -40,7 +38,6 @@ function MapComponent({ originPosition, destinationPosition }) {
 	};
 
 	const handlePublish = async () => {
-		//console.log("Distance:", distance);
 		const calculatedPrice = await calculatePrice(distance); // Calculate the price before showing the modal
 		setPrice(calculatedPrice);
 		setShowModal(true); // Mostrar el modal de confirmación
@@ -64,7 +61,7 @@ function MapComponent({ originPosition, destinationPosition }) {
 			// Redireccionar a mis publicaciones
 			setShowModal(false); // Cerrar el modal después de publicar
 			// si se publica correctamente, mostrar el modal de verificacion
-			if (response.status === 200){
+			if (response.status === 200) {
 				setShowModalVerification(true); // Abre el modal de confirmacio
 			}
 		} catch (error) {
@@ -75,12 +72,12 @@ function MapComponent({ originPosition, destinationPosition }) {
 	};
 
 	return (
-		<div style={{ height: "65vh", width: "99%" }}>
+		<div className="flex flex-col items-center w-full h-full" style={{ height: "100vh", width: "100%" }}>
 			<MapContainer
-				center={position}
+				center={position} 	
 				zoom={zoom}
 				scrollWheelZoom={true}
-				style={{ height: "100%", width: "100%", zIndex: 0 }}
+				style={{ height: "100vh", width: "100%" }}
 				whenCreated={(map) => (mapRef.current = map)} // Ensure mapRef is set correctly
 			>
 				<TileLayer
@@ -106,14 +103,16 @@ function MapComponent({ originPosition, destinationPosition }) {
 				)}
 			</MapContainer>
 			<div style={{ marginTop: "10px", textAlign: "center" }}>
-				<button
-					onClick={handlePublish}
-					className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-					Publicar Viaje
-				</button>
+				{originPosition && destinationPosition && (
+					<button
+						onClick={handlePublish}
+						className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+						Publicar Viaje
+					</button>
+				)}
 			</div>
 
-			{/* Modal pra confirmar pblicación */}
+			{/* Modal para confirmar publicación */}
 			{showModal && (
 				<div className="fixed inset-0 flex items-center justify-center z-50">
 					<div className="fixed inset-0 bg-gray-600 bg-opacity-50"></div>
@@ -122,7 +121,7 @@ function MapComponent({ originPosition, destinationPosition }) {
 						<p className="mb-4">
 							¿Estás seguro de que deseas publicar este viaje?
 						</p>
-						<p className="bd-4">El precio sera $ {price}</p>
+						<p className="mb-4">El precio será $ {price}</p>
 						<div className="flex justify-end">
 							<button
 								onClick={confirmPublish}
@@ -138,24 +137,24 @@ function MapComponent({ originPosition, destinationPosition }) {
 					</div>
 				</div>
 			)}
-			{/*Modal de verificaion */}
+			{/* Modal de verificación */}
 			{showModalVerification && (
 				<div className="fixed inset-0 flex items-center justify-center z-50">
 					<div className="fixed inset-0 bg-gray-600 bg-opacity-50"></div>
 					<div className="bg-white p-6 rounded-lg shadow-lg z-10">
 						<h2 className="text-lg font-bold mb-4">
-							La publicacion fue publicada exitosamente
+							La publicación fue publicada exitosamente
 						</h2>
 						<p className="mb-4"></p>
 						<div className="flex justify-end">
 							<button
-								// redirigir a  navigate('/usuario-home'); y cerrar el modal
+								// redirigir a navigate('/usuario-home'); y cerrar el modal
 								onClick={() => {
 									setShowModalVerification(false);
 									navigate("/usuario-home");
 								}}
 								className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-blue-700">
-								Coninuar
+								Continuar
 							</button>
 						</div>
 					</div>
