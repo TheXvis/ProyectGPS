@@ -7,11 +7,9 @@ const CouponSchema = new mongoose.Schema({
     dueDate: { type: Date, required: true },
     isPaid: { type: Boolean, default: false },
     receipt: String,
-    accountToTransfer: { type: String, default: '20618792-1' }, 
-    accountName: { type: String, default: 'Rodrigo Beltran' },
-    imageUrl: { type: String }
+    accountToTransfer: { type: String, default: '20618792-1' },
+    accountName: { type: String, default: 'Rodrigo Beltran' }
 });
 
 
 module.exports = mongoose.model('Coupon', CouponSchema);
-

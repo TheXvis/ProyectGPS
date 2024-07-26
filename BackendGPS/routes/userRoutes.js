@@ -56,6 +56,7 @@ router.post('/login', async (req, res) => {
     // Verificar la contraseña
     console.log('Contraseña ingresada:', password);
     console.log('Contraseña almacenada:', user.password);
+    console.log(`Usuario encontrado: ${JSON.stringify(user)}`); // Log para el usuario encontrado
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
@@ -72,6 +73,7 @@ router.post('/login', async (req, res) => {
     );
 
     console.log(`Rol devuelto por el backend: ${user.role}`);
+    console.log(`Token generado para el usuario con rol: ${user.role}`); // Log para el token generado
 
     res.json({ token, role: user.role });
   } catch (error) {
