@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import SendIcon from "./../../assets/send.svg";
 import GpsIcon from "./../../assets/gps.svg";
 import MapIcon from "./../../assets/mapPoint.svg";
