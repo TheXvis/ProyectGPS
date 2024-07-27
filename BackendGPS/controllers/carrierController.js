@@ -8,15 +8,15 @@ const createCarrier = async (req, res) => {
     try {
         const { nombre, apellido, rut } = req.body;
         const regex = /^[a-zA-Z\s]+$/;
-        const rutRegex = /^\d{2}\.\d{3}\.\d{3}-[\dkK]$/;
+        // const rutRegex = /^\d{2}\.\d{3}\.\d{3}-[\dkK]$/;
 
         if (!regex.test(nombre) || !regex.test(apellido)) {
             return res.status(400).send({ error: 'Nombre y apellido solo pueden contener letras.' });
         }
 
-        if (!rutRegex.test(rut)) {
-            return res.status(400).send({ error: 'RUT no válido. Debe seguir el formato xx.xxx.xxx-x.' });
-        }
+        // if (!rutRegex.test(rut)) {
+        //     return res.status(400).send({ error: 'RUT no válido. Debe seguir el formato xx.xxx.xxx-x.' });
+        // }
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const carrier = new Carrier({

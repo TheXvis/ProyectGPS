@@ -50,14 +50,16 @@ app.post('/login', async (req, res) => {
     let userType = 'user';
 
     if (!user) {
+      console.log('rut:', req.body.rut);
       user = await Carrier.findOne({ rut: req.body.rut });
       userType = 'carrier';
     }
 
     if (!user) {
+      console.log('rut segundo:', req.body.rut);
       return res.status(400).json({ message: 'User not found' });
     }
-
+    console.log('user:', user);
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) {
       return res.status(400).json({ message: 'Invalid password' });

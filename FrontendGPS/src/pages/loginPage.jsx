@@ -30,42 +30,25 @@ function LoginPage() {
         body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password }), // Enviar RUT sin puntos ni guiones
       });
       const data = await response.json();
-      console.log('user data:', response);
-
       if (response.ok) {
-        handleLoginSuccess(data);
-      } else {
-        // Try to authenticate as carrier if user authentication fails
-        const carrierResponse = await fetch('http://localhost:3000/carrier/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password }), // Enviar RUT sin puntos ni guiones
-        });
-        const carrierData = await carrierResponse.json();
-        console.log('Carrier data:', carrierData);
-        if (carrierResponse.ok) {
-          handleLoginSuccess(carrierData);
-        } else {
-          console.error(carrierData);
+        console.log('Rol devuelto por el backend:', data.role);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
+        localStorage.setItem('rut', rut.replace(/\./g, '').replace('-', ''));
+        
+        const userType = localStorage.getItem('role');
+        console.log('Rol almacenado en localStorage:', userType);
+        if (userType === 'user' || userType === 'admin') {
+          navigate('/usuario-home');
         }
+        if (userType === 'carrier') {
+          navigate('/usuario-home');
+        }
+      } else {
+        console.error(data);
       }
     } catch (error) {
       console.error(error);
-    }
-  };
-
-  const handleLoginSuccess = (data) => {
-    console.log('Rol devuelto por el backend:', data.role);
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('role', data.role);
-    localStorage.setItem('rut', rut);
-
-    const userType = localStorage.getItem('role');
-    console.log('Rol almacenado en localStorage:', userType);
-    if (userType === 'user' || userType === 'admin') {
-      navigate('/usuario-home');
-    } else if (userType === 'carrier') {
-      navigate('/carrierPage');
     }
   };
 
