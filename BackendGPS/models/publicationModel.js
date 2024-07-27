@@ -11,7 +11,7 @@ const publicationSchema = new Schema({
     precio: { type: Number, required: false },
     ubicacionCarga: { type: Schema.Types.Mixed, required: false },
     ubicacionDescarga: { type: Schema.Types.Mixed, required: false },
-    estado: { type: String},
+    estado: { type: String, required: true, default: 'Disponible' },
   });
 
 module.exports = mongoose.model('Publication', publicationSchema);

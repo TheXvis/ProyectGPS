@@ -73,12 +73,12 @@ function MapComponent({ originPosition, destinationPosition }) {
 	};
 
 	return (
-		<div className="flex flex-col items-center w-full h-full" style={{ height: "100vh", width: "100%" }}>
+		<div className="flex flex-col items-center w-full h-full relative">
 			<MapContainer
 				center={position} 	
 				zoom={zoom}
 				scrollWheelZoom={true}
-				style={{ height: "100vh", width: "100%" }}
+				style={{ height: "100vh", width: "100%", zIndex: 1 }}
 				whenCreated={(map) => (mapRef.current = map)} // Ensure mapRef is set correctly
 			>
 				<TileLayer
@@ -103,7 +103,7 @@ function MapComponent({ originPosition, destinationPosition }) {
 					/>
 				)}
 			</MapContainer>
-			<div style={{ marginTop: "10px", textAlign: "center" }}>
+			<div style={{ marginTop: "10px", textAlign: "center", zIndex: 10 }}>
 				{originPosition && destinationPosition && (
 					<button
 						onClick={handlePublish}
