@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const reseñaSchema = new Schema({
+  idPublicacion : { type: String, required: true },
   rutUser: { type: String, ref: 'user', required: true },
   rutCarrier: { type: String, ref: 'carrier', required: true },
   rating: { type: Number, required: true, min: 1, max: 5 },
