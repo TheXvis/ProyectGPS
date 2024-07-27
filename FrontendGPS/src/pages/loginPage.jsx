@@ -42,7 +42,7 @@ function LoginPage() {
           navigate('/usuario-home');
         }
         if (userType === 'carrier') {
-          navigate('/publicationlist');
+          navigate('/usuario-home');
         }
       } else {
         console.error(data);

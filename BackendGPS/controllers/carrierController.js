@@ -2,20 +2,21 @@ const express = require('express');
 const Carrier = require('../models/carrierModel');
 const bcrypt = require('bcrypt');
 const Publication = require('../models/publicationModel');
+const jwt = require('jsonwebtoken');
 
 const createCarrier = async (req, res) => {
     try {
         const { nombre, apellido, rut } = req.body;
         const regex = /^[a-zA-Z\s]+$/;
-        const rutRegex = /^\d{2}\.\d{3}\.\d{3}-[\dkK]$/;
+        // const rutRegex = /^\d{2}\.\d{3}\.\d{3}-[\dkK]$/;
 
         if (!regex.test(nombre) || !regex.test(apellido)) {
             return res.status(400).send({ error: 'Nombre y apellido solo pueden contener letras.' });
         }
 
-        if (!rutRegex.test(rut)) {
-            return res.status(400).send({ error: 'RUT no válido. Debe seguir el formato xx.xxx.xxx-x.' });
-        }
+        // if (!rutRegex.test(rut)) {
+        //     return res.status(400).send({ error: 'RUT no válido. Debe seguir el formato xx.xxx.xxx-x.' });
+        // }
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const carrier = new Carrier({
@@ -112,6 +113,42 @@ const cambiarDisp = async (req, res) => {
     }
 };
 
+const loginCarrier = async (req, res) => {
+    const { rut, password } = req.body;
+  
+    try {
+      // Buscar al carrier por rut en la base de datos
+      const carrier = await Carrier.findOne({ rut });
+      console.log(`Carrier encontrado: ${carrier}`);
+      console.log(`Rut recibido: ${rut}`);
+      
+      if (!carrier) {
+        console.log('rut:');
+        return res.status(404).json({ error: 'Carrier no encontrado SAS' });
+      }
+  
+      // Verificar la contraseña
+      const passwordMatch = await bcrypt.compare(password, carrier.password);
+      if (!passwordMatch) {
+        return res.status(401).json({ error: 'Credenciales inválidas' });
+      }
+  
+      // Devolver token JWT con información del carrier
+      const token = jwt.sign(
+        { rut: carrier.rut, role: carrier.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+  
+      console.log(`Rol devuelto por el backend: ${carrier.role}`);
+  
+      // Devolver token y rol del carrier
+      res.json({ token, role: carrier.role });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
 module.exports = {
     createCarrier,
     getCarrier,
@@ -120,4 +157,5 @@ module.exports = {
     deleteCarrier,
     aceptarPublicacion,
     cambiarDisp,
+    loginCarrier,
 };

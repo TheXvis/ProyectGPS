@@ -19,6 +19,9 @@ import PagoPage from './pages/pagoPage';
 import RegisterPage from './pages/registerPage';
 import MisReviews from './pages/Carrier/misReviews.jsx';
 
+import CarrierListPage from './pages/carrierPages/carrierListPage.jsx';
+import CarrierRegisterPage from './pages/carrierPages/carrierRegisterPage.jsx';
+
 
 function Redirector() {
   const navigate = useNavigate();
@@ -64,7 +67,9 @@ function App() {
           <Route path="/accountPage" element={<Layout><AccountPage/></Layout>} />
           <Route path="/registro" element={<RegisterPage/>} /> 
           <Route path="/pago" element={<Layout><PagoPage/></Layout>} />
-          <Route path="/publicationlist" element={<PublicationList/>} />
+          <Route path="/publicationlist" element={<Layout><PublicationList/></Layout>} />
+          <Route path="/carrier-list" element={<Layout><CarrierListPage/></Layout>} />
+          <Route path="/carrier-register" element={<Layout><CarrierRegisterPage/></Layout>} />
           
           <Route path="/registro" element={<RegisterPage/>} />
           <Route path="/publication/details/:id" element={<Layout><PublicationDetailsPage/></Layout>} />

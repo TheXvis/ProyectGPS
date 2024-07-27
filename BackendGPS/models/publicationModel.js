@@ -8,9 +8,9 @@ const publicationSchema = new Schema({
     tipoMercancia: { type: String, required: true },
     imagen: { type: String },
     peso: { type: Number, required: true },
-    precio: { type: Number, required: true },
-    ubicacionCarga: { type: String, required: true },
-    ubicacionDescarga: { type: String, required: true },
+    precio: { type: Number, required: false },
+    ubicacionCarga: { type: Schema.Types.Mixed, required: false },
+    ubicacionDescarga: { type: Schema.Types.Mixed, required: false },
     estado: { type: String, required: true, default: 'Disponible' },
   });
 

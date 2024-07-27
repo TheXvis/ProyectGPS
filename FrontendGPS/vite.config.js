@@ -15,5 +15,13 @@ export default defineConfig({
     commonjsOptions: {
       include: [/leaflet-routing-machine/, /node_modules/]
     }
+  },
+  server: {
+    proxy: {
+      '/socket.io': {
+        target: 'http://localhost:3000',
+        ws: true
+      }
+    }
   }
 });

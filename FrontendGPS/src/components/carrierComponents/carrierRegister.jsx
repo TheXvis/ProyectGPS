@@ -33,13 +33,29 @@ const CarrierRegister = () => {
         setShowFirstForm(false);
     };
 
+    const formatRut = (rut) => {
+        if (!rut) return '';
+        let rutBody = rut.slice(0, -1);
+        let rutDv = rut.slice(-1);
+        rutBody = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return `${rutBody}-${rutDv}`;
+    };
+
     const handleChange = (e) => {
         const { id, value, type, checked } = e.target;
-        setCarrierData({
-            ...carrierData,
-            [id]: type === 'checkbox' ? checked : value
-        });
-    }
+        if (id === 'rut') {
+            const formattedRut = formatRut(value.replace(/\./g, '').replace('-', ''));
+            setCarrierData({
+                ...carrierData,
+                [id]: formattedRut
+            });
+        } else {
+            setCarrierData({
+                ...carrierData,
+                [id]: type === 'checkbox' ? checked : value
+            });
+        }
+    };
 
     const handleConfirmPasswordChange = (e) => {
         const value = e.target.value;
@@ -61,14 +77,17 @@ const CarrierRegister = () => {
             const response = await fetch("http://localhost:3000/carrier/crear", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(carrierData)
+                body: JSON.stringify({
+                    ...carrierData,
+                    rut: carrierData.rut.replace(/\./g, '').replace('-', '')
+                })
             });
             const result = await response.json();
             console.log(result);
         } catch (err) {
             console.error(err.message);
         }
-    }
+    };
     return (
 
         <div>
@@ -98,7 +117,7 @@ const CarrierRegister = () => {
                                     name='rut'
                                     onChange={handleChange}
                                     value={carrierData.rut}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="xx.xxx.xxx-x" pattern="\d{2}\.\d{3}\.\d{3}-[\dkK]" required />
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="xx.xxx.xxx-x" required />
                             </div>
                             <div>
                                 <label htmlFor="telefono" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Telefono</label>
