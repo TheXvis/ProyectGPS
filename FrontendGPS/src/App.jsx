@@ -68,7 +68,7 @@ function App() {
           
           <Route path="/registro" element={<RegisterPage/>} />
           <Route path="/publication/details/:id" element={<Layout><PublicationDetailsPage/></Layout>} />
-          <Route path='/misreviews' element={<MisReviews/>} />
+          <Route path='/misreviews' element={<Layout><MisReviews/></Layout>} />
            
         </Routes>
       </div>
