@@ -63,5 +63,19 @@ export const useCarrierService = () => {
         }
     };
 
-    return { carriers, editCarrier, deleteCarrier, getCarrierById };
+    const fetchCarrier = async (rut) => {
+        try {
+            const response = await fetch(`http://localhost:3000/carrier/ver/${rut}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const result = await response.json();
+            return result; // Retorna el carrier buscado
+        } catch (err) {
+            console.error(err.message);
+            return null;
+        }
+    };
+
+    return { carriers, editCarrier, deleteCarrier, getCarrierById, fetchCarrier };
 };
