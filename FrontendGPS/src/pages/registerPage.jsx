@@ -85,24 +85,30 @@ function RegisterPage() {
   if (registerType === null) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-        <button
-          className="mb-4 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-          onClick={() => setRegisterType('user')}
-        >
-          Registrarse como Usuario
-        </button>
-        <button
-          className="mb-4 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-          onClick={() => setRegisterType('carrier')}
-        >
-          Registrarse como Carrier
-        </button>
-        <button
-          className="w-full text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
-          onClick={() => navigate('/')}
-        >
-          Volver
-        </button>
+        <div className="mb-4 flex justify-center w-full">
+          <button
+            className="w-auto text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={() => setRegisterType('user')}
+          >
+            Registrarse como Usuario
+          </button>
+        </div>
+        <div className="mb-4 flex justify-center w-full">
+          <button
+            className="w-auto text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={() => setRegisterType('carrier')}
+          >
+            Registrarse como Carrier
+          </button>
+        </div>
+        <div className="flex justify-center w-full">
+          <button
+            className="w-auto text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+            onClick={() => navigate('/')}
+          >
+            Volver
+          </button>
+        </div>
       </div>
     );
   }

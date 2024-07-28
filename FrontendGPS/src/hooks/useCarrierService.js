@@ -77,5 +77,5 @@ export const useCarrierService = () => {
         }
     };
 
-    return { carriers, editCarrier, deleteCarrier, getCarrierById, fetchCarrier };
+    return { carriers, editCarrier, deleteCarrier, getCarrierById, fetchCarrier, setCarriers };
 };

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useCarrierService } from '../../hooks/useCarrierService';
+import Alert from '../Alerts';
 
 const CarrierTable = () => {
-    const { carriers, fetchCarrier, editCarrier} = useCarrierService();
+    const { carriers, fetchCarrier, editCarrier, deleteCarrier, setCarriers } = useCarrierService();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     // const [carriers, setCarriers] = useState([]);
@@ -21,6 +22,12 @@ const CarrierTable = () => {
     const currentCarriers = filteredCarriers.slice(indexOfFirstCarrier, indexOfLastCarrier);
 
     const [selectedCarrier, setSelectedCarrier] = useState({});
+
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [carrierToDelete, setCarrierToDelete] = useState(null);
+
+    // Alerta
+    const [alert, setAlert] = useState({ message: '', type: '', visible: false });
 
     const handleCarrierClick = async (rut) => {
         const data = await fetchCarrier(rut);
@@ -50,12 +57,66 @@ const CarrierTable = () => {
             await editCarrier(selectedCarrier.rut, selectedCarrier);
             setIsEditable(false);
             setIsModalOpen(false);
+            setAlert({ message: 'Carrier updated successfully!', type: 'success', visible: true });
         }
     };
+
+    const handleDeleteClick = (rut) => {
+        setCarrierToDelete(rut);
+        setShowDeleteConfirmation(true);
+    };
+
+    const confirmDelete = async () => {
+        if (carrierToDelete) {
+            try {
+                await deleteCarrier(carrierToDelete);
+                setAlert({ message: 'Carrier deleted successfully!', type: 'success', visible: true });
+                const updatedCarriers = carriers.filter(carrier => carrier.rut !== carrierToDelete);
+                setCarriers(updatedCarriers);
+            } catch (error) {
+                setAlert({ message: `Failed to delete carrier: ${error.message}`, type: 'error', visible: true });
+            } finally {
+                setShowDeleteConfirmation(false);
+                setCarrierToDelete(null);
+            }
+        }
+    };
+
+    const handleCloseAlert = () => {
+        setAlert({ ...alert, visible: false });
+    };
+
 
 
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            {alert.visible && <Alert message={alert.message} type={alert.type} onClose={handleCloseAlert} />}
+
+            {showDeleteConfirmation && (
+                <div id="alert-additional-content-2" className="fixed inset-0 flex items-center justify-center p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+                    <div className="bg-white p-4 rounded-lg shadow-lg dark:bg-gray-800 max-w-md mx-auto">
+                        <div className="flex items-center">
+                            <svg className="flex-shrink-0 w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                            </svg>
+                            <span className="sr-only">Info</span>
+                            <h3 className="text-lg font-medium">ATENCION</h3>
+                        </div>
+                        <div className="mt-2 mb-4 text-sm">
+                            ¿Estás seguro de que deseas eliminar este carrier? Esta acción no se puede deshacer.
+                        </div>
+                        <div className="flex">
+                            <button type="button" className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" onClick={confirmDelete}>
+                                Confirmar
+                            </button>
+                            <button type="button" className="text-red-800 bg-transparent border border-red-800 hover:bg-red-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-red-600 dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800" onClick={() => setShowDeleteConfirmation(false)} aria-label="Close">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
                 <div>
                     {/* Botón y dropdown aquí */}
@@ -77,13 +138,7 @@ const CarrierTable = () => {
             </div>
             <div className="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
                 <div>
-                    <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction" className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
-                        <span className="sr-only">Action button</span>
-                        Action
-                        <svg className="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                        </svg>
-                    </button>
+
                     {/* <!-- Dropdown menu --> */}
                     <div id="dropdownAction" className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
                         <ul className="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
@@ -118,6 +173,9 @@ const CarrierTable = () => {
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Acciones
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Eliminar
                         </th>
                     </tr>
                 </thead>
@@ -173,6 +231,16 @@ const CarrierTable = () => {
                                     onClick={() => handleCarrierClick(carrier.rut)}
                                 >
                                     Ver Detalles
+                                </button>
+                            </td>
+                            <td className="px-6 py-4">
+                                {/* <!-- Modal toggle --> */}
+                                <button
+                                    type="button"
+                                    className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                    onClick={() => handleDeleteClick(carrier.rut)}
+                                >
+                                    ELIMINAR
                                 </button>
                             </td>
                         </tr>
@@ -288,7 +356,7 @@ const CarrierTable = () => {
                                     <button
                                         type="submit"
                                         className="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                        // onClick={handleSaveClick}
+                                    // onClick={handleSaveClick}
                                     >
                                         Guardar
                                     </button>
