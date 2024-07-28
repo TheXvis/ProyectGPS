@@ -5,6 +5,7 @@ import CarrierRegister from "../components/carrierComponents/carrierRegister.jsx
 import Modal from "../components/carrierComponents/modalComponent.jsx";
 import CarrierTable from "../components/carrierComponents/carrierTable.jsx";
 import { useState } from 'react';
+import ChatComponent from "../components/chatComponents/chatComponent.jsx";
 
 const CarrierPage = () => {
     //constantes para que funcione el modal
@@ -14,6 +15,8 @@ const CarrierPage = () => {
 
     return (
         <>
+            <h1 className="text-3xl font-semibold text-white">ChatComponent</h1>
+            <ChatComponent />
             <h1 className="text-3xl font-semibold text-white">CarrierTable</h1>
             <CarrierTable />
             <h1 className="text-3xl font-semibold text-white">CarrierRegister</h1>

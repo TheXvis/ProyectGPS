@@ -7,9 +7,11 @@ const publicationSchema = new Schema({
   nombre: { type: String, required: true },
   tipoMercancia: { type: String, required: true },
   imagen: { type: String },
-  precio: { type: String },
   peso: { type: Number, required: true },
-  estado: { type: String, default: 'Pendiente' },
+  precio: { type: Number, required: false },
+  ubicacionCarga: { type: Schema.Types.Mixed, required: false },
+  ubicacionDescarga: { type: Schema.Types.Mixed, required: false },
+  estado: { type: String, required: true, default: 'Disponible' },
 });
 
 module.exports = mongoose.model('Publication', publicationSchema);

@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');  // Necesitamos http para crear el servidor
+const { Server } = require('socket.io');  // Importar Server desde socket.io
+const app = express();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
@@ -9,6 +12,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 const port = 3000;
+const users = {}
+
+const server = http.createServer(app);
+
+// Crear la instancia de Socket.IO
+const io = new Server(server);
 
 const userRoutes = require('./routes/userRoutes');
 const carrierRoutes = require('./routes/carrierRoutes');
@@ -41,14 +50,16 @@ app.post('/login', async (req, res) => {
     let userType = 'user';
 
     if (!user) {
+      console.log('rut:', req.body.rut);
       user = await Carrier.findOne({ rut: req.body.rut });
       userType = 'carrier';
     }
 
     if (!user) {
+      console.log('rut segundo:', req.body.rut);
       return res.status(400).json({ message: 'User not found' });
     }
-
+    console.log('user:', user);
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) {
       return res.status(400).json({ message: 'Invalid password' });
@@ -70,6 +81,63 @@ app.post('/registro', async (req, res) => {
   res.status(201).send({ message: 'User registered successfully' });
 });
 
-app.listen(port, () => {
+io.on('connection', (socket) => {
+  console.log('Usuario conectado')
+
+  socket.on('join', ({ token }) => {
+    users[token] = socket.id;
+    io.emit('users', Object.keys(users));
+  });
+
+  socket.on('disconnect', () => {
+    for (const [token, id] of Object.entries(users)) {
+      if (id === socket.id) {
+        delete users[token];
+        break;
+      }
+    }
+    io.emit('users', Object.keys(users));
+  });
+
+  // socket.on('chat message', (body) => {
+  //   console.log('message: ' + body);
+  //   socket.broadcast.emit('chat message', {
+  //     body,
+  //     from: socket.id.slice(4)
+  //   });
+  // });
+  socket.on('chat message', ({ message, token, partnerToken }) => {
+    const partnerSocketId = users[partnerToken];
+    if (partnerSocketId) {
+      io.to(partnerSocketId).emit('chat message', {
+        body: message,
+        from: token,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: 'Delivered'
+      });
+    }
+  });
+
+  socket.on('join', ({ token }) => {
+    users[token] = socket.id;
+    io.emit('users', Object.keys(users));
+  });
+
+  socket.on('disconnect', () => {
+    for (const [token, id] of Object.entries(users)) {
+      if (id === socket.id) {
+        delete users[token];
+        break;
+      }
+    }
+    io.emit('users', Object.keys(users));
+  });
+
+});
+
+// app.listen(port, () => {
+//   console.log(`Aplicación escuchando en http://localhost:${port}`);
+// });
+server.listen(port, () => {
   console.log(`Aplicación escuchando en http://localhost:${port}`);
 });

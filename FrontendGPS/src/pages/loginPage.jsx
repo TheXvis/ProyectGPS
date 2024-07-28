@@ -35,10 +35,13 @@ function LoginPage() {
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', data.role);
         localStorage.setItem('rut', rut);
-        
+
         const userType = localStorage.getItem('role');
         console.log('Rol almacenado en localStorage:', userType);
         if (userType === 'user' || userType === 'admin') {
+          navigate('/usuario-home');
+        }
+        if (userType === 'carrier') {
           navigate('/usuario-home');
         }
       } else {
