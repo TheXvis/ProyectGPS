@@ -38,7 +38,7 @@ function NavigationPage() {
     }, [id]);
 
     useEffect(() => {
-        if (socketRef.current) {
+        if (!socketRef.current) {
             socketRef.current = io("/");
             // join
             socketRef.current.emit("join", { token: localStorage.getItem("token") });
@@ -56,7 +56,6 @@ function NavigationPage() {
                         }
                         // Enviar la ubicación actual al servidor a través del socket
                         socketRef.current.emit("locationUpdate", {id, latitude, longitude, heading});
-                        console.log("Ubicación actual:", newPosition);
                     },
                     (error) => {
                         console.error("Error obteniendo la ubicación:", error);
