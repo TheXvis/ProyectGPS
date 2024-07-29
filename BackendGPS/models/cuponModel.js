@@ -8,7 +8,9 @@ const CouponSchema = new mongoose.Schema({
     isPaid: { type: Boolean, default: false },
     receipt: String,
     accountToTransfer: { type: String, default: '20618792-1' },
-    accountName: { type: String, default: 'Rodrigo Beltran' }
+    accountName: { type: String, default: 'Rodrigo Beltran' },
+    publicationName: { type: String }, // Agregado
+    publicationDestination: { type: String }, // Agregado
 });
 
 

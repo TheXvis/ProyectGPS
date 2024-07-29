@@ -1,12 +1,14 @@
 const Coupon = require('../models/cuponModel.js');
 
 const generateCoupon = async (req, res, next) => {
-    const { userId, amount, dueDate } = req.body;
+    const { userId, amount, dueDate, publicationName, publicationDestination } = req.body;
 
     const coupon = new Coupon({
         userId,
         amount,
-        dueDate
+        dueDate,
+        publicationDestination,
+        publicationName,
     });
 
     try {
