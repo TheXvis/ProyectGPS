@@ -83,22 +83,6 @@ app.post('/registro', async (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('Usuario conectado')
-
-  socket.on('join', ({ token }) => {
-    users[token] = socket.id;
-    io.emit('users', Object.keys(users));
-  });
-
-  socket.on('disconnect', () => {
-    for (const [token, id] of Object.entries(users)) {
-      if (id === socket.id) {
-        delete users[token];
-        break;
-      }
-    }
-    io.emit('users', Object.keys(users));
-  });
-
   // socket.on('chat message', (body) => {
   //   console.log('message: ' + body);
   //   socket.broadcast.emit('chat message', {
@@ -132,7 +116,6 @@ io.on('connection', (socket) => {
     }
     io.emit('users', Object.keys(users));
   });
-  
 });
 
 // app.listen(port, () => {
