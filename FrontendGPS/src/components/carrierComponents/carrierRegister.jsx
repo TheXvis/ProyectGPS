@@ -20,7 +20,8 @@ const CarrierRegister = () => {
         capacidadCarga: 0,
         calificacion: 0,
         role: "carrier",
-        email: ""
+        email: "",
+        imagenCarrier: null
     });
 
     const handleFirstSubmit = (event) => {
@@ -42,12 +43,17 @@ const CarrierRegister = () => {
     };
 
     const handleChange = (e) => {
-        const { id, value, type, checked } = e.target;
+        const { id, value, type, checked, files } = e.target;
         if (id === 'rut') {
             const formattedRut = formatRut(value.replace(/\./g, '').replace('-', ''));
             setCarrierData({
                 ...carrierData,
                 [id]: formattedRut
+            });
+        } else if (type === 'file') {
+            setCarrierData({
+                ...carrierData,
+                [id]: files[0]
             });
         } else {
             setCarrierData({
@@ -73,14 +79,16 @@ const CarrierRegister = () => {
             alert("Las contraseñas no coinciden");
             return;
         }
+
+        const formData = new FormData();
+        for (const key in carrierData) {
+            formData.append(key, carrierData[key]);
+        }
+
         try {
             const response = await fetch("http://localhost:3000/carrier/crear", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...carrierData,
-                    rut: carrierData.rut.replace(/\./g, '').replace('-', '')
-                })
+                body: formData
             });
             const result = await response.json();
             console.log(result);
@@ -88,6 +96,7 @@ const CarrierRegister = () => {
             console.error(err.message);
         }
     };
+
     return (
 
         <div>
@@ -151,6 +160,18 @@ const CarrierRegister = () => {
                                 value={confirmPassword}
                                 className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${passwordMatch ? 'border-gray-300' : 'border-red-500'}`} placeholder="•••••••••" required />
                             {!passwordMatch && <p className="text-red-500 text-sm">Las contraseñas no coinciden</p>}
+                        </div>
+                        <div>
+                            <label htmlFor="imagenCarrier" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Subida de archivos</label>
+                            <input
+                                type="file"
+                                id="imagenCarrier"
+                                name="imagenCarrier"
+                                onChange={handleChange}
+                                required
+                                accept=".pdf, .jpg, .png, .jpeg"
+                                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                            />
                         </div>
                         <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Continuar</button>
 
@@ -219,7 +240,7 @@ const CarrierRegister = () => {
                                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                                     onClick={handleFirstSubmit}
                                 >
-                                    Volver
+                                    Atrás
                                 </button>
                             </div>
                         </div>

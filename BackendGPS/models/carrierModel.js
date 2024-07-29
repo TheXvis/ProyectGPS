@@ -16,6 +16,7 @@ const carrierSchema = new mongoose.Schema({
     calificacion: { type: Number, default: 0 },
     role: { type: String, required: true, default: 'carrier'},
     email: { type: String, required: false },
+    imagenCarrier: { type: String, required: false },
   });
   
   module.exports = mongoose.model('Carrier', carrierSchema);
