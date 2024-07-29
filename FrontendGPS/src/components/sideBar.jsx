@@ -92,9 +92,9 @@ function SideBar() {
 					<div className="flex-1 text-right">
 						{/* Elemento central */}
 						<Link
-							to="/usuario-home"
+							to="/contacto"
 							className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
-							Soporte
+							Contacto
 						</Link>
 					</div>
 				</div>
