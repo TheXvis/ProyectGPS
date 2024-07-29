@@ -42,5 +42,6 @@ router.get('/', cuponController.getCoupon);
 router.delete('/:id', cuponController.deleteCoupon);
 router.put('/:id', cuponController.updateCoupon);
 router.post('/:id/upload', upload.single('image'), cuponController.uploadCouponImage);
+router.delete('/:id/delete-image', cuponController.deleteCouponImage);
 
 module.exports = router;

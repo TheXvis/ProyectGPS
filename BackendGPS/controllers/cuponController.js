@@ -95,10 +95,29 @@ const uploadCouponImage = async (req, res) => {
     }
 };
 
+const deleteCouponImage = async (req, res) => {
+    try {
+        const couponId = req.params.id;
+
+        // Actualizar el cupón con la URL de la imagen
+        const updatedCoupon = await Coupon.findByIdAndUpdate(
+            couponId,
+            { imageUrl: null },
+            { new: true }
+        );
+
+        res.status(200).json(updatedCoupon);
+    } catch (error) {
+        console.error('Error al eliminar la imagen:', error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
 module.exports = {
     generateCoupon,
     getCoupon,
     deleteCoupon,
     updateCoupon,
     uploadCouponImage,
+    deleteCouponImage,
 };
