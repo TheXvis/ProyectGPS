@@ -1,5 +1,7 @@
 import io from 'socket.io-client';
 import { useState, useEffect } from 'react';
+import { useCarrierService } from '../../hooks/useCarrierService';
+import { useUserService } from '../../hooks/useUserService';
 
 const socket = io('/');
 
@@ -12,19 +14,41 @@ const ChatComponent = ({ partnerToken }) => {
 
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [userName, setUserName] = useState('');
+
   const token = localStorage.getItem('token');
+  const userRut = localStorage.getItem('rut');
+  const userRole = localStorage.getItem('role');
+
+  const { getCarrierById } = useCarrierService();
+  const { getUserById } = useUserService();
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      let user;
+      if (userRole === 'carrier') {
+        user = await getCarrierById(userRut);
+      } else {
+        user = await getUserById(userRut);
+      }
+      if (user) {
+        setUserName(user.nombre); 
+      }
+    };
+
+    fetchUserName();
+  }, [userRut, userRole, getCarrierById, getUserById]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newMessage = {
       body: message,
-      from: 'TU',
+      from: userName,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       status: 'Delivered' // mostrar el estado de entrega
     };
     setMessages([...messages, newMessage]);
-    // socket.emit('chat message', message);
-    socket.emit('chat message', { message, token, partnerToken: selectedUser });
+    socket.emit('chat message', { message, token, partnerToken: selectedUser, from: userName });
   };
 
   // useEffect(() => {
@@ -54,11 +78,16 @@ const ChatComponent = ({ partnerToken }) => {
     // };
   }, [token]);
 
-  const receiveMessage = (msg) => setMessages((state) => [...state, msg]);
+  const receiveMessage = (msg) => {
+    if (msg && msg.from) {
+      setMessages((state) => [...state, msg]);
+    } else {
+      console.error('Received message without "from" property:', msg);
+    }
+  };
 
   return (
     <>
-      <div>ChatComponent</div>
       <div>
         <p className="text-xl font-semibold text-blue-600/100 dark:text-blue-500/100">Usuarios Conectados</p>
         <ul>
