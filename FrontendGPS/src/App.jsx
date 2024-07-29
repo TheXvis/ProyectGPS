@@ -22,6 +22,9 @@ import MisReviews from './pages/Carrier/misReviews.jsx';
 import CarrierListPage from './pages/carrierPages/carrierListPage.jsx';
 import CarrierRegisterPage from './pages/carrierPages/carrierRegisterPage.jsx';
 
+import ContactPage from './pages/ContactPage.jsx';
+
+
 
 function Redirector() {
   const navigate = useNavigate();
@@ -74,7 +77,7 @@ function App() {
           <Route path="/registro" element={<RegisterPage/>} />
           <Route path="/publication/details/:id" element={<Layout><PublicationDetailsPage/></Layout>} />
           <Route path='/misreviews' element={<Layout><MisReviews/></Layout>} />
-           
+          <Route path="/contacto" element={<Layout><ContactPage/></Layout>} />
         </Routes>
       </div>
     </Router>
