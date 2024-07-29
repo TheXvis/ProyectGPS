@@ -29,6 +29,8 @@ function PublicationDetailsPage() {
 
     if (response.ok) {
       alert('Publicación aceptada con éxito');
+      // ir a pagina de navegacion, pasarle el id de la publicacion
+
     } else {
       alert('Error al aceptar la publicación');
     }
@@ -41,6 +43,8 @@ function PublicationDetailsPage() {
 
     if (response.ok) {
       alert('Viaje comenzado con exito');
+      console.log(id);
+      navigate(`/navegacion/${id}`);
     } else {
       alert('Error al comenzar el viaje');
     }
