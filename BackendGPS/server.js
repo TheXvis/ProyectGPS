@@ -5,6 +5,9 @@ const { Server } = require('socket.io');  // Importar Server desde socket.io
 const app = express();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
 app.use(express.json());
 app.use(cors());
 const port = 3000;
@@ -18,17 +21,13 @@ const io = new Server(server);
 const userRoutes = require('./routes/userRoutes');
 const carrierRoutes = require('./routes/carrierRoutes');
 const publicationRoutes = require('./routes/publicationRoutes');
-const cuponRoutes = require('./routes/cuponRoutes');
+const cuponRoutes = require('./routes/cuponRoutes'); // Asegúrate de que esta ruta está definida correctamente
 const reviewRoutes = require('./routes/reviewRoutes');
 
 const User = require('./models/userModel');
 const Carrier = require('./models/carrierModel');
 const cupon = require('./models/cuponModel');
 
-
-require('dotenv').config();
-
-const mongoose = require('mongoose');
 const uri = process.env.MONGODB_URI;
 
 mongoose.connect(uri, {
@@ -40,8 +39,8 @@ mongoose.connect(uri, {
 app.use('/user', userRoutes);
 app.use('/carrier', carrierRoutes);
 app.use('/publication', publicationRoutes);
-app.use('/images', express.static('images'));
-app.use('/cupon', cuponRoutes);
+app.use('/images', express.static('images')); // Servir archivos estáticos desde la carpeta images
+app.use('/cupon', cuponRoutes); // Asegúrate de que las rutas para los cupones están definidas correctamente
 app.use('/review', reviewRoutes);
 
 app.post('/login', async (req, res) => {
@@ -111,6 +110,7 @@ io.on('connection', (socket) => {
     }
     io.emit('users', Object.keys(users));
   });
+
 });
 
 // app.listen(port, () => {
