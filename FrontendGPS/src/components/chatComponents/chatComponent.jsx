@@ -7,7 +7,7 @@ const socket = io('/');
 
 //205150391 password 
 
-const ChatComponent = ({ partnerToken }) => {
+const ChatComponent = ({ partnerRut }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
@@ -43,28 +43,29 @@ const ChatComponent = ({ partnerToken }) => {
         console.error('User not found');
       }
     };
-  
+
     fetchUserName();
   }, [userRut, userRole, getCarrierById, getUserById]);
 
- 
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('message:', message);
     console.log('userName:', userName);
-    if (!message || !userName) {
-      console.error('Message or userName is missing');
+    if (!message || !userName || !selectedUser) {
+      console.error('Message, userName, or selectedUser is missing');
       return;
     }
     const newMessage = {
       body: message,
       from: userName,
+      to: selectedUser,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'Delivered' // mostrar el estado de entrega
+      status: 'Delivered'
     };
     setMessages([...messages, newMessage]);
-    socket.emit('chat message', { message, token, partnerToken: selectedUser, from: userName });
+    socket.emit('chat message', { message, token, partnerRut: selectedUser, userRut });
     console.log('selectedUser:', selectedUser);
     console.log('token:', token);
   };
@@ -77,10 +78,15 @@ const ChatComponent = ({ partnerToken }) => {
   // }, []);
 
   useEffect(() => {
-    socket.emit('join', { token });
+    socket.emit('join', { token, rut: userRut });
 
     socket.on('users', (users) => {
       setUsers(users);
+      // Automatically select a user different from userRut
+      const differentUser = users.find(user => user !== userRut);
+      if (differentUser && !selectedUser) {
+        setSelectedUser(differentUser);
+      }
     });
 
     socket.on('chat message', receiveMessage);
@@ -89,18 +95,13 @@ const ChatComponent = ({ partnerToken }) => {
       socket.off('users');
       socket.off('chat message', receiveMessage);
     };
-
-    // socket.on('chat message', receiveMessage);
-    // return () => {
-    //   socket.off('chat message', receiveMessage);
-    // };
-  }, [token]);
+  }, [token, userRut, selectedUser]);
 
   const receiveMessage = (msg) => {
-    if (msg && msg.from) {
+    if (msg && msg.from && msg.to === userRut) {
       setMessages((state) => [...state, msg]);
     } else {
-      console.error('Received message without "from" property:', msg);
+      console.error('Received message without "from" property or not intended for this user:', msg);
     }
   };
 
@@ -113,7 +114,7 @@ const ChatComponent = ({ partnerToken }) => {
             <li
               key={user}
               onClick={() => setSelectedUser(user)}
-              className="bg-white p-2 rounded-lg shadow-md hover:bg-gray-100"
+              className={`bg-white p-2 rounded-lg shadow-md hover:bg-gray-100 ${selectedUser === user ? 'bg-gray-200' : ''} ${user === userRut ? 'bg-blue-200' : ''}`}
             >
               {user.length > 10 ? `${user.substring(0, 10)}...` : user}
             </li>
