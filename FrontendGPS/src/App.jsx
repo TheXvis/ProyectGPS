@@ -24,6 +24,7 @@ import CarrierRegisterPage from './pages/carrierPages/carrierRegisterPage.jsx';
 
 import ContactPage from './pages/ContactPage.jsx';
 import NavigationPage from './pages/Maps/Navigation.jsx';
+import LiveTrackingPage  from './pages/Maps/LiveTrackingPage.jsx';
 
 
 function Redirector() {
@@ -79,6 +80,7 @@ function App() {
           <Route path='/misreviews' element={<Layout><MisReviews/></Layout>} />
           <Route path="/contacto" element={<Layout><ContactPage/></Layout>} />
           <Route path="/navegacion/:id" element={<Layout><NavigationPage/></Layout>} />
+          <Route path="/seguimiento/:id" element={<Layout><LiveTrackingPage/></Layout>} />
         </Routes>
       </div>
     </Router>

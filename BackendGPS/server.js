@@ -9,6 +9,7 @@ app.use(express.json());
 app.use(cors());
 const port = 3000;
 const users = {};
+const tracking = {};
 
 const server = http.createServer(app);
 
@@ -97,6 +98,12 @@ io.on("connection", (socket) => {
 		io.emit("users", Object.keys(users));
 	});
 
+
+	socket.on('joinLocation', ({ id }) => {
+        console.log(`Cliente ${socket.id} se unió a la sala: ${id}`);
+        socket.join(id);
+    });
+
 	socket.on("disconnect", () => {
 		for (const [token, id] of Object.entries(users)) {
 			if (id === socket.id) {
@@ -107,13 +114,7 @@ io.on("connection", (socket) => {
 		io.emit("users", Object.keys(users));
 	});
 
-	// socket.on('chat message', (body) => {
-	//   console.log('message: ' + body);
-	//   socket.broadcast.emit('chat message', {
-	//     body,
-	//     from: socket.id.slice(4)
-	//   });
-	// });
+
 	socket.on("chat message", ({ message, token, partnerToken }) => {
 		const partnerSocketId = users[partnerToken];
 		if (partnerSocketId) {
@@ -128,16 +129,14 @@ io.on("connection", (socket) => {
 			});
 		}
 	});
-	// seguimiento de ubicacion
-	socket.on("locationUpdate", ({ id, latitude, longitude, heading }) => {
-    console.log("locationUpdate", {id, latitude, longitude, heading });
-    io.to(id).emit("locationUpdate", { id, latitude, longitude, heading });
-});
+
+	socket.on('locationUpdate', ({ id, latitude, longitude, heading }) => {
+        console.log('locationUpdate', { id, latitude, longitude, heading });
+        io.to(id).emit('locationUpdate', { id, latitude, longitude, heading });
+    });
 });
 
-// app.listen(port, () => {
-//   console.log(`Aplicación escuchando en http://localhost:${port}`);
-// });
+
 server.listen(port, () => {
 	console.log(`Aplicación escuchando en http://localhost:${port}`);
 });
