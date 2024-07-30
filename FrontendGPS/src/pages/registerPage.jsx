@@ -1,16 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CarrierRegister from '../components/carrierComponents/carrierRegister';
 
 function RegisterPage() {
   const navigate = useNavigate();
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [nombre, setNombre] = useState(''); 
-  const [apellido, setApellido] = useState(''); 
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [telefono, setTelefono] = useState('');
+
+  // Estado para manejar la selección del tipo de registro
+  const [registerType, setRegisterType] = useState(null);
+
   const rutRegex = /^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}$/;
   const emailRegex = /^[\w-]+(\.[\w-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*?\.[a-z]{2,6}|(\d{1,3}\.){3}\d{1,3})(:\d{4})?$/i;
   const telefonoRegex = /^9\d{8}$/;
@@ -40,7 +45,7 @@ function RegisterPage() {
       setErrorMessage("Formato de RUT inválido");
       return;
     }
-    
+
     if (!emailRegex.test(email)) {
       setErrorMessage("Formato de correo electrónico inválido");
       return;
@@ -57,7 +62,7 @@ function RegisterPage() {
       const response = await fetch('http://localhost:3000/user/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password, Nombre: nombre, Apellido: apellido, email, Telefono: telefono}),
+        body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password, Nombre: nombre, Apellido: apellido, email, Telefono: telefono }),
       });
 
       // Log para depuración
@@ -76,6 +81,56 @@ function RegisterPage() {
       setErrorMessage(error.message);
     }
   };
+
+  if (registerType === null) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="mb-4 flex justify-center w-full">
+          <button
+            className="w-auto text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={() => setRegisterType('user')}
+          >
+            Registrarse como Usuario
+          </button>
+        </div>
+        <div className="mb-4 flex justify-center w-full">
+          <button
+            className="w-auto text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={() => setRegisterType('carrier')}
+          >
+            Registrarse como Carrier
+          </button>
+        </div>
+        <div className="flex justify-center w-full">
+          <button
+            className="w-auto text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+            onClick={() => navigate('/')}
+          >
+            Volver
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (registerType === 'carrier') {
+    return (
+      <div>
+        <div>
+          <CarrierRegister />
+        </div>
+        <div className="flex justify-center mt-4">
+          <button
+            type="button"
+            className="mt-4 w-auto text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={() => setRegisterType(null)}
+          >
+            Volver
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900 min-h-screen ">
@@ -201,7 +256,7 @@ function RegisterPage() {
               <button
                 type="button"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                onClick={() => navigate('/')}
+                onClick={() => setRegisterType(null)}
               >
                 Volver
               </button>

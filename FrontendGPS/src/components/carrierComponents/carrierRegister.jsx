@@ -150,9 +150,10 @@ const CarrierRegister = () => {
                                 onChange={handleConfirmPasswordChange}
                                 value={confirmPassword}
                                 className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${passwordMatch ? 'border-gray-300' : 'border-red-500'}`} placeholder="•••••••••" required />
-                                {!passwordMatch && <p className="text-red-500 text-sm">Las contraseñas no coinciden</p>}
+                            {!passwordMatch && <p className="text-red-500 text-sm">Las contraseñas no coinciden</p>}
                         </div>
                         <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Continuar</button>
+
                     </div>
                 </form>
             ) : (
@@ -194,14 +195,19 @@ const CarrierRegister = () => {
                                 value={carrierData.descripcion}
                                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Ingrese la descripción" />
                         </div>
-
                         <div className="mb-5">
                             <label htmlFor="capacidadCarga" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Capacidad de Carga</label>
-                            <input type="number" id="capacidadCarga"
+                            <select id="capacidadCarga"
                                 name='capacidadCarga'
                                 onChange={handleChange}
                                 value={carrierData.capacidadCarga}
-                                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="Ingrese la capacidad de carga" />
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <option value={0}>Seleccione la capacidad de carga</option>
+                                <option value={5}>Carga ligera: máx 5 kg</option>
+                                <option value={25}>Carga media: 5 kg - 25 kg</option>
+                                <option value={1000}>Carga pesada: 25 kg - 1 tonelada</option>
+                                <option value={1001}>Carga muy pesada: más de 1 tonelada</option>
+                            </select>
                         </div>
                         <div className="flex">
                             <div className="pr-2">
