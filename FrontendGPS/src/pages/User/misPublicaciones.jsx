@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function UserPublicationsPage() {
   const [publications, setPublications] = useState([]);
-
+  const navigate = useNavigate();
   // Función para normalizar el RUT
   const normalizeRut = (rut) => {
     return rut.replace(/\./g, '').replace(/-/g, '');
