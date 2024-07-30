@@ -91,7 +91,7 @@ app.post("/registro", async (req, res) => {
 });
 
 io.on("connection", (socket) => {
-	console.log("Usuario conectado");
+	// console.log("Usuario conectado");
 
 	socket.on("join", ({ token }) => {
 		users[token] = socket.id;
@@ -100,7 +100,7 @@ io.on("connection", (socket) => {
 
 
 	socket.on('joinLocation', ({ id }) => {
-        console.log(`Cliente ${socket.id} se unió a la sala: ${id}`);
+        // console.log(`Cliente ${socket.id} se unió a la sala: ${id}`);
         socket.join(id);
     });
 
@@ -131,7 +131,7 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on('locationUpdate', ({ id, latitude, longitude, heading }) => {
-        console.log('locationUpdate', { id, latitude, longitude, heading });
+        // console.log('locationUpdate', { id, latitude, longitude, heading });
         io.to(id).emit('locationUpdate', { id, latitude, longitude, heading });
     });
 });
