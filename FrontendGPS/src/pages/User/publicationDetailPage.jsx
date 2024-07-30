@@ -79,7 +79,9 @@ function PublicationDetailsPage() {
     });
 
     if (response.ok) {
-      alert('Viaje comenzado con éxito');
+      alert('Viaje comenzado con exito');
+      console.log(id);
+      navigate(`/navegacion/${id}`);
     } else {
       alert('Error al comenzar el viaje');
     }
