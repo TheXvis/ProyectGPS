@@ -8,10 +8,14 @@ const MisReviews = () => {
   const [error, setError] = useState(null);
   const rutCarrier = localStorage.getItem('rut');
 
+  const normalizeRut = (rutCarrier) => {
+    return rutCarrier.replace(/\./g, '').replace(/-/g, '');
+  };
+
   useEffect(() => {
     const fetchPublicaciones = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/publication/verPCa/${rutCarrier}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/publication/verPCa/${normalizeRut(rutCarrier)}`);
         if (!response.ok) {
           throw new Error('Error al obtener las reseñas');
         }
@@ -30,7 +34,7 @@ const MisReviews = () => {
 
   useEffect(() => {
     const misReviews = async () => {
-        const response = await fetch(`http://localhost:3000/review/ver/${rutCarrier}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/review/ver/${normalizeRut(rutCarrier)}`);
         const data = await response.json();
         setReviews(data);
     };
@@ -64,7 +68,7 @@ const MisReviews = () => {
         <div className="space-y-4 w-full">
           {combinedData.map((combinedData) => (
             <div key={combinedData._id} className="flex items-center bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 p-4 w-full md:w-3/4 lg:w-1/2 mx-auto">
-              <img className="h-auto w-48 mr-4" src={`http://localhost:3000/${combinedData.imagen}`} alt="image description" />
+              <img className="h-auto w-48 mr-4" src={`${import.meta.env.VITE_API_URL}/${combinedData.imagen}`} alt="image description" />
               <div>
               <h1 className="text-lg font-bold text-gray-900 dark:text-white">Publicacion: {combinedData.nombre}</h1>
                 <div className="flex items-center space-x-2 mb-3">

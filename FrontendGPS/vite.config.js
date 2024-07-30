@@ -19,7 +19,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/socket.io': {
-        target: `${import.meta.env.VITE_API_URL}`,
+        target: `http://localhost:3000`,
         ws: true
       }
     }

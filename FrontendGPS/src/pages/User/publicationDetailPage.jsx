@@ -53,20 +53,20 @@ function PublicationDetailsPage() {
     misReviews();
   }, [publication]);
 
-  useEffect(() => {
-    const misReviews = async () => {
-      if (publication && publication.rutCarrier) {
-        const carrierRut = publication.rutCarrier;
-        console.log(carrierRut);
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/review/ver/${carrierRut}`);
-        const data = await response.json();
-        setReviews(data);
-        console.log(data);
-      }
-    };
+  // useEffect(() => {
+  //   const misReviews = async () => {
+  //     if (publication && publication.rutCarrier) {
+  //       const carrierRut = publication.rutCarrier;
+  //       console.log(carrierRut);
+  //       const response = await fetch(`${import.meta.env.VITE_API_URL}/review/ver/${carrierRut}`);
+  //       const data = await response.json();
+  //       setReviews(data);
+  //       console.log(data);
+  //     }
+  //   };
 
-    misReviews();
-  }, [publication]);
+  //   misReviews();
+  // }, [publication]);
 
   // Funciones del carrier
   const solucitarPublicacion = async () => {

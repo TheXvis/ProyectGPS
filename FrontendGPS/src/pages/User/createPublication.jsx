@@ -8,7 +8,7 @@ function CreatePublicationForm() {
 	const [tipoMercancia, setTipoMercancia] = useState("");
 	const [imagen, setImagen] = useState("");
 	const [peso, setPeso] = useState("");
-	const estado = useState("Disponible");
+	const [estado] = useState("Disponible");
 	const navigate = useNavigate();
 
 	const normalizeRut = (rut) => {
