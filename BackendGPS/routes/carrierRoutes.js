@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const carrierController = require('../controllers/carrierController');
+const upload = require('../controllers/carrierController').upload;
 
 
-router.post('/crear', carrierController.createCarrier );
+router.post('/crear', upload.single('imagenCarrier'), carrierController.createCarrier );
 router.get('/ver/:rut', carrierController.getCarrier);
 router.get('/verTodos', carrierController.getAllCarriers);
 router.put('/editar/:rut', carrierController.updateCarrier);

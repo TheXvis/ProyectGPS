@@ -3,30 +3,45 @@ const Carrier = require('../models/carrierModel');
 const bcrypt = require('bcrypt');
 const Publication = require('../models/publicationModel');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+
+// Configuración de multer para almacenar archivos
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploadsCarrier/'); // Carpeta donde se guardarán los archivos
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const upload = multer({ storage });
 
 const createCarrier = async (req, res) => {
     try {
         const { nombre, apellido, rut } = req.body;
         const regex = /^[a-zA-Z\s]+$/;
-        // const rutRegex = /^\d{2}\.\d{3}\.\d{3}-[\dkK]$/;
 
         if (!regex.test(nombre) || !regex.test(apellido)) {
             return res.status(400).send({ error: 'Nombre y apellido solo pueden contener letras.' });
         }
 
-        // if (!rutRegex.test(rut)) {
-        //     return res.status(400).send({ error: 'RUT no válido. Debe seguir el formato xx.xxx.xxx-x.' });
-        // }
-
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const carrier = new Carrier({
+        const carrierData = {
             ...req.body,
             password: hashedPassword,
-        });
+        };
 
+        if (req.file) {
+            carrierData.imagenCarrier = req.file.path; // Guardar la ruta del archivo si existe
+        }
+
+        const carrier = new Carrier(carrierData);
         await carrier.save();
         res.status(201).send(carrier);
     } catch (error) {
+        console.error(error);
         res.status(400).send(error);
     }
 };
@@ -158,4 +173,5 @@ module.exports = {
     aceptarPublicacion,
     cambiarDisp,
     loginCarrier,
+    upload
 };
