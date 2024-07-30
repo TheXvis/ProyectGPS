@@ -1,8 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import emailjs from '@emailjs/browser';
 import EditPublicationForm from '../../components/userComponents/editPublicationForm';
 import ReseñaForm from '../../components/userComponents/reseñaForm';
+
+
+const sendEmail = (templateId, variables) => {
+  emailjs.send(
+    import.meta.env.VITE_EMAILJS_SERVICE_ID,
+    templateId,
+    variables,
+    import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+  )
+  .then((response) => {
+    console.log('Correo enviado exitosamente:', response.status, response.text);
+  })
+  .catch((err) => {
+    console.error('Error al enviar el correo:', err);
+  });
+};
+
 
 function PublicationDetailsPage() {
   const { id } = useParams();
@@ -26,13 +43,33 @@ function PublicationDetailsPage() {
     const response = await fetch(`http://localhost:3000/carrier/aceptar/${id}/${carrierRut}`, {
       method: 'PUT',
     });
-
+  
     if (response.ok) {
-      alert('Publicación aceptada con éxito');
+      const carrierNombre = localStorage.getItem('nombre');
+      const carrierApellido = localStorage.getItem('apellido');
+      const userEmail = publication.userEmail;
+  
+      console.log('Enviando correo a:', userEmail);
+      console.log('Nombre del Carrier:', carrierNombre);
+      console.log('Apellido del Carrier:', carrierApellido);
+  
+      sendEmail(
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          user_email: userEmail,
+          carrier_nombre: carrierNombre,
+          carrier_apellido: carrierApellido,
+          publication_nombre: publication.nombre,
+        }
+      );
+  
+      alert('Publicación solicitada con éxito');
     } else {
-      alert('Error al aceptar la publicación');
+      alert('Error al solicitar la publicación');
     }
   };
+  
+  
 
   const iniciarViaje = async () => {
     const response = await fetch(`http://localhost:3000/publication/inicioviaje/${id}`, {
@@ -40,6 +77,13 @@ function PublicationDetailsPage() {
     });
 
     if (response.ok) {
+      sendEmail(
+        'template_iniciar_viaje',
+        {
+          user_email: publication.useremail,
+          publication_nombre: publication.nombre,
+        }
+      );
       alert('Viaje comenzado con éxito');
     } else {
       alert('Error al comenzar el viaje');
@@ -52,6 +96,13 @@ function PublicationDetailsPage() {
     });
 
     if (response.ok) {
+      sendEmail(
+        'template_finalizar_viaje',
+        {
+          user_email: publication.useremail,
+          publication_nombre: publication.nombre,
+        }
+      );
       alert('Viaje finalizado con éxito');
     } else {
       alert('Error al finalizar el viaje');
@@ -87,6 +138,13 @@ function PublicationDetailsPage() {
       method: 'PUT',
     });
     if (response.ok) {
+      sendEmail(
+        'template_aceptar_solicitud',
+        {
+          carrier_email: publication.carrieremail,
+          publication_nombre: publication.nombre,
+        }
+      );
       alert('Publicación aceptada con éxito');
     } else {
       alert('Error al aceptar la publicación');
