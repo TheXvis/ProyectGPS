@@ -341,7 +341,6 @@ function PagoPage() {
             {coupon && (
                 <div style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                     <h2 style={{ marginBottom: '10px' }}>Cupón generado</h2>
-                    <p><strong>Id:</strong> {coupon._id}</p>
                     <p><strong>Rut:</strong> {coupon.userId}</p>
                     <p><strong>Monto:</strong> {coupon.amount}</p>
                     <p><strong>Fecha de Vencimiento</strong>: {new Date(coupon.dueDate).toLocaleDateString('es-ES', {
