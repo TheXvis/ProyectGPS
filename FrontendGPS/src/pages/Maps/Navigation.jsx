@@ -42,7 +42,7 @@ function NavigationPage() {
 	useEffect(() => {
 		const fetchPublication = async () => {
 			const response = await fetch(
-				`http://localhost:3000/publication/buscar/${id}`
+				`${import.meta.env.VITE_API_URL}/publication/buscar/${id}`
 			);
 			const data = await response.json();
 			setPublication(data);

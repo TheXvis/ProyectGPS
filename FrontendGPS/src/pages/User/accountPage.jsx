@@ -15,7 +15,7 @@ function AccountDetails() {
     const fetchUser = async () => {
       const rut = localStorage.getItem('rut');
       const normalizedRut = normalizeRut(rut);
-      const response = await axios.get(`http://localhost:3000/user/ver/${normalizedRut}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/ver/${normalizedRut}`);
       setUser(response.data);
     };
 
@@ -27,7 +27,7 @@ function AccountDetails() {
     try {
       const rut = localStorage.getItem('rut');
       const normalizedRut = normalizeRut(rut);
-      const response = await axios.put(`http://localhost:3000/user/editar/${normalizedRut}`, user);
+      const response = await axios.put(`${import.meta.env.VITE_API_URL}/user/editar/${normalizedRut}`, user);
       console.log(response.data);
       alert('Detalles de la cuenta actualizados con éxito');
       setIsEditing(false);

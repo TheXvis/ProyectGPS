@@ -31,10 +31,10 @@ const CouponList = ({ coupons, handleFileChange, handleUploadFile, handleDeleteC
                                 <div>
                                     <p>Imagen subida:</p>
                                     <img
-                                        src={`http://localhost:3000/${coupon.receipt}`}
+                                        src={`${import.meta.env.VITE_API_URL}/${coupon.receipt}`}
                                         alt="Receipt"
                                         style={{ maxWidth: '200px', maxHeight: '200px', cursor: 'pointer' }}
-                                        onClick={() => openModal(`http://localhost:3000/${coupon.receipt}`)}
+                                        onClick={() => openModal(`${import.meta.env.VITE_API_URL}/${coupon.receipt}`)}
                                     />
                                 </div>
                             )}

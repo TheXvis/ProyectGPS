@@ -9,7 +9,7 @@ export const useCarrierService = () => {
 
     const fetchCarriers = async () => {
         try {
-            const response = await fetch("http://localhost:3000/carrier/verTodos", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/carrier/verTodos`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -22,7 +22,7 @@ export const useCarrierService = () => {
 
     const editCarrier = async (rut, carrierData) => {
         try {
-            const response = await fetch(`http://localhost:3000/carrier/editar/${rut}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/carrier/editar/${rut}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(carrierData)
@@ -37,7 +37,7 @@ export const useCarrierService = () => {
 
     const deleteCarrier = async (rut) => {
         try {
-            const response = await fetch(`http://localhost:3000/carrier/borrar/${rut}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/carrier/borrar/${rut}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" }
             });
@@ -51,7 +51,7 @@ export const useCarrierService = () => {
 
     const getCarrierById = async (rut) => {
         try {
-            const response = await fetch(`http://localhost:3000/carrier/ver/${rut}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/carrier/ver/${rut}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -65,7 +65,7 @@ export const useCarrierService = () => {
 
     const fetchCarrier = async (rut) => {
         try {
-            const response = await fetch(`http://localhost:3000/carrier/ver/${rut}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/carrier/ver/${rut}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });

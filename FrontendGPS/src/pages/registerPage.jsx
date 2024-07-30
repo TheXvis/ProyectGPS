@@ -59,7 +59,7 @@ function RegisterPage() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/user/registro', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/registro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password, Nombre: nombre, Apellido: apellido, email, Telefono: telefono }),

@@ -26,7 +26,7 @@ function CreatePublicationForm() {
 
 		try {
 			const response = await axios.post(
-				"http://localhost:3000/publication/crear",
+				`${import.meta.env.VITE_API_URL}/publication/crear`,
 				formData,
 				{
 					headers: {

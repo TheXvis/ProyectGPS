@@ -51,7 +51,7 @@ function MapComponent({ originPosition, destinationPosition }) {
 			const formattedDestination = JSON.stringify(destinationPosition);
 
 			const response = await axios.put(
-				`http://localhost:3000/publication/${publicationId}`,
+				`${import.meta.env.VITE_API_URL}/publication/${publicationId}`,
 				{
 					ubicacionCarga: formattedOrigin,
 					ubicacionDescarga: formattedDestination,

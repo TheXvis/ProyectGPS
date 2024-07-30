@@ -16,7 +16,7 @@ function EditPublicationForm() {
   // Cargar los datos de la publicación al montar el componente
   useEffect(() => {
     const fetchPublication = async () => {
-      const response = await fetch(`http://localhost:3000/publication/buscar/${id}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/publication/buscar/${id}`);
       const data = await response.json();
       // Inicializa el estado del formulario con los datos cargados
       if (data) {
@@ -43,7 +43,7 @@ function EditPublicationForm() {
         ubicacionCarga,
         ubicacionDescarga
       };
-      const response = await fetch(`http://localhost:3000/publication/editar/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/publication/editar/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

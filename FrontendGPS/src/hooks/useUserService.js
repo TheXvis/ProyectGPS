@@ -9,7 +9,7 @@ export const useUserService = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch("http://localhost:3000/user/verTodos", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/user/verTodos`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -22,7 +22,7 @@ export const useUserService = () => {
 
     const editUser = async (rut, userData) => {
         try {
-            const response = await fetch(`http://localhost:3000/user/editar/${rut}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/user/editar/${rut}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userData)
@@ -37,7 +37,7 @@ export const useUserService = () => {
 
     const deleteUser = async (rut) => {
         try {
-            const response = await fetch(`http://localhost:3000/user/borrar/${rut}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/user/borrar/${rut}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" }
             });
@@ -51,7 +51,7 @@ export const useUserService = () => {
 
     const getUserById = async (rut) => {
         try {
-            const response = await fetch(`http://localhost:3000/user/ver/${rut}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/user/ver/${rut}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -65,7 +65,7 @@ export const useUserService = () => {
 
     const fetchUser = async (rut) => {
         try {
-            const response = await fetch(`http://localhost:3000/user/ver/${rut}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/user/ver/${rut}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });

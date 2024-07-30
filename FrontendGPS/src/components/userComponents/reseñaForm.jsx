@@ -23,7 +23,7 @@ const ReseñaForm = () => {
         comentario
       };
 
-      const response = await fetch(`http://localhost:3000/review/crear`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/review/crear`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

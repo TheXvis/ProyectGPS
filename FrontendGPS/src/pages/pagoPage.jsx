@@ -42,7 +42,7 @@ function PagoPage() {
     useEffect(() => {
         const fetchPublications = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/publication/ver/${userId}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/publication/ver/${userId}`);
                 setPublications(response.data);
             } catch (error) {
                 console.error(`Error al obtener las publicaciones: ${error}`);
@@ -131,7 +131,7 @@ function PagoPage() {
         };
 
         try {
-            const response = await axios.post('http://localhost:3000/cupon', data);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/cupon`, data);
             const newCoupon = {
                 ...response.data,
                 publicationName: nombre,
@@ -197,7 +197,7 @@ function PagoPage() {
     useEffect(() => {
         const fetchCoupons = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/cupon`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/cupon`, {
                     params: { userId }
                 });
                 setCoupons(response.data);
@@ -218,7 +218,7 @@ function PagoPage() {
     const handleDeleteCoupon = async (couponId) => {
         if (window.confirm("¿Está seguro que desea eliminar este cupón?")) {
             try {
-                const response = await axios.delete(`http://localhost:3000/cupon/${couponId}`);
+                const response = await axios.delete(`${import.meta.env.VITE_API_URL}/cupon/${couponId}`);
                 if (response.status === 200) {
                     // Actualiza los cupones para eliminar el cupón eliminado
                     setCoupons(coupons.filter((coupon) => coupon._id !== couponId));
@@ -250,7 +250,7 @@ function PagoPage() {
         formData.append('file', selectedFile.file);
 
         try {
-            const response = await axios.post(`http://localhost:3000/cupon/upload/${couponId}`, formData, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/cupon/upload/${couponId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -272,7 +272,7 @@ function PagoPage() {
 
     const handleDeleteReceipt = async (couponId) => {
         try {
-            const response = await axios.delete(`http://localhost:3000/cupon/${couponId}/delete-image/`);
+            const response = await axios.delete(`${import.meta.env.VITE_API_URL}/cupon/${couponId}/delete-image/`);
             if (response.status === 200) {
                 setCoupons(coupons.map(c => c._id === couponId ? { ...c, receipt: null } : c));
             }
@@ -283,7 +283,7 @@ function PagoPage() {
 
     const handleSearchByRut = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/cupon`, {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/cupon`, {
                 params: { userId: cleanRut(searchRut) }
             });
             if (response.data.length === 0) {
@@ -306,7 +306,7 @@ function PagoPage() {
     const handleUpdateCouponStatus = async () => {
         const newStatus = !selectedCoupon.isPaid;
         try {
-            const response = await axios.put(`http://localhost:3000/cupon/${selectedCoupon._id}`, {
+            const response = await axios.put(`${import.meta.env.VITE_API_URL}/cupon/${selectedCoupon._id}`, {
                 isPaid: newStatus
             });
             if (response.status === 200) {

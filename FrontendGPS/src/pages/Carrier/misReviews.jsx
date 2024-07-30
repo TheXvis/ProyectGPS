@@ -9,7 +9,7 @@ const MisReviews = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/review/ver/${rutCarrier}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/review/ver/${rutCarrier}`);
         if (!response.ok) {
           throw new Error('Error al obtener las reseñas');
         }
