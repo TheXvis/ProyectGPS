@@ -39,7 +39,9 @@ function PublicationDetailsPage() {
 
   // Funciones del carrier
   const solucitarPublicacion = async () => {
-    const carrierRut = localStorage.getItem('rut');
+    const carrierRut = localStorage.getItem('rut').replace(/[.-]/g, '');
+    const userEmail = (publication?.userEmail || 'correoDesconocido@example.com').trim();
+
     const response = await fetch(`http://localhost:3000/carrier/aceptar/${id}/${carrierRut}`, {
       method: 'PUT',
     });
@@ -77,13 +79,6 @@ function PublicationDetailsPage() {
     });
 
     if (response.ok) {
-      sendEmail(
-        'template_iniciar_viaje',
-        {
-          user_email: publication.useremail,
-          publication_nombre: publication.nombre,
-        }
-      );
       alert('Viaje comenzado con éxito');
     } else {
       alert('Error al comenzar el viaje');
@@ -96,13 +91,6 @@ function PublicationDetailsPage() {
     });
 
     if (response.ok) {
-      sendEmail(
-        'template_finalizar_viaje',
-        {
-          user_email: publication.useremail,
-          publication_nombre: publication.nombre,
-        }
-      );
       alert('Viaje finalizado con éxito');
     } else {
       alert('Error al finalizar el viaje');
@@ -138,13 +126,6 @@ function PublicationDetailsPage() {
       method: 'PUT',
     });
     if (response.ok) {
-      sendEmail(
-        'template_aceptar_solicitud',
-        {
-          carrier_email: publication.carrieremail,
-          publication_nombre: publication.nombre,
-        }
-      );
       alert('Publicación aceptada con éxito');
     } else {
       alert('Error al aceptar la publicación');

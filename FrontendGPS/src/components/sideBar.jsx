@@ -14,6 +14,13 @@ function SideBar() {
 
 	const sidebarRef = useRef(null);
 
+	//para abrir solo un dropdown a la vez en el sidebar
+	const [openDropdownId, setOpenDropdownId] = useState(null);
+
+	const handleDropdownToggle = (id) => {
+		setOpenDropdownId(openDropdownId === id ? null : id);
+	};
+
 	useEffect(() => {
 		const userRole = localStorage.getItem("role");
 		if (userRole) {
