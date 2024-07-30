@@ -51,7 +51,7 @@ function RegisterPage() {
       return;
     }
     if (!telefonoRegex.test(telefono)) {
-      setErrorMessage("Formato de teléfono inválido");
+      setErrorMessage("Formato de teléfono inválido");//Debe sar el formato correcto
       return;
     }
     if (password !== confirmPassword) {

@@ -15,6 +15,7 @@ router.post('/crear', async (req, res) => {
     const rutCarrier = publication.rutCarrier;
 
     const newReview = new Review({
+      idPublicacion,
       rutUser,
       rutCarrier,
       rating,

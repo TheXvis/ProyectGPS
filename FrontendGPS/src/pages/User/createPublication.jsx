@@ -8,6 +8,7 @@ function CreatePublicationForm() {
 	const [tipoMercancia, setTipoMercancia] = useState("");
 	const [imagen, setImagen] = useState("");
 	const [peso, setPeso] = useState("");
+	const estado = useState("Disponible");
 	const navigate = useNavigate();
 
 	const normalizeRut = (rut) => {
@@ -23,6 +24,7 @@ function CreatePublicationForm() {
 		formData.append("tipoMercancia", tipoMercancia);
 		formData.append("imagen", imagen);
 		formData.append("peso", peso);
+		formData.append("estado", estado);
 
 		try {
 			const response = await axios.post(
