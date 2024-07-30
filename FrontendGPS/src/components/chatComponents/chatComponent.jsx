@@ -7,7 +7,6 @@ const socket = io('/');
 
 //205150391 password 
 
-
 const ChatComponent = ({ partnerToken }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
@@ -26,21 +25,38 @@ const ChatComponent = ({ partnerToken }) => {
   useEffect(() => {
     const fetchUserName = async () => {
       let user;
+      console.log('userRole:', userRole);
+      // console.log('userRut:', userRut);
       if (userRole === 'carrier') {
         user = await getCarrierById(userRut);
+        if (user) {
+          setUserName(user.nombre);
+        }
       } else {
         user = await getUserById(userRut);
+        // console.log('user:', user);
+        if (user) {
+          setUserName(user.Nombre);
+        }
       }
-      if (user) {
-        setUserName(user.nombre); 
+      if (!user) {
+        console.error('User not found');
       }
     };
-
+  
     fetchUserName();
   }, [userRut, userRole, getCarrierById, getUserById]);
 
+ 
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('message:', message);
+    console.log('userName:', userName);
+    if (!message || !userName) {
+      console.error('Message or userName is missing');
+      return;
+    }
     const newMessage = {
       body: message,
       from: userName,
@@ -49,6 +65,8 @@ const ChatComponent = ({ partnerToken }) => {
     };
     setMessages([...messages, newMessage]);
     socket.emit('chat message', { message, token, partnerToken: selectedUser, from: userName });
+    console.log('selectedUser:', selectedUser);
+    console.log('token:', token);
   };
 
   // useEffect(() => {
