@@ -21,7 +21,7 @@ router.post('/crear', async (req, res) => {
       Apellido,
       Telefono,
       email,
-      role: role || 'user'
+      role: role || 'admin'
     });
 
     console.log('Usuario creado:', newUser); // Verifica el objeto de usuario antes de guardarlo
