@@ -16,7 +16,8 @@ const ChatComponent = ({ partnerRut }) => {
   const [userName, setUserName] = useState('');
 
   const token = localStorage.getItem('token');
-  const userRut = localStorage.getItem('rut');
+  const rawRut = localStorage.getItem('rut');
+  const userRut = rawRut ? rawRut.replace(/\./g, '').replace('-', '') : '';
   const userRole = localStorage.getItem('role');
 
   const { getCarrierById } = useCarrierService();

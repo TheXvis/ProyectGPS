@@ -20,10 +20,6 @@ const PublicationListCard = () => {
         setSelectedPublication(null);
     };
     
-
-    console.log(publications);
-    console.log(rut);
-
     const filteredPublications = publications.filter(publication => {
         if (role === 'carrier') {
             return publication.estado === "En transito" && publication.rutCarrier === rut;
