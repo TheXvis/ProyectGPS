@@ -1,16 +1,13 @@
 import io from 'socket.io-client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useCarrierService } from '../../hooks/useCarrierService';
 import { useUserService } from '../../hooks/useUserService';
 
 const socket = io('/');
 
-//205150391 password 
-
 const ChatComponent = ({ partnerRut }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userName, setUserName] = useState('');
@@ -27,7 +24,6 @@ const ChatComponent = ({ partnerRut }) => {
     const fetchUserName = async () => {
       let user;
       console.log('userRole:', userRole);
-      // console.log('userRut:', userRut);
       if (userRole === 'carrier') {
         user = await getCarrierById(userRut);
         if (user) {
@@ -35,7 +31,6 @@ const ChatComponent = ({ partnerRut }) => {
         }
       } else {
         user = await getUserById(userRut);
-        // console.log('user:', user);
         if (user) {
           setUserName(user.Nombre);
         }
@@ -48,7 +43,32 @@ const ChatComponent = ({ partnerRut }) => {
     fetchUserName();
   }, [userRut, userRole, getCarrierById, getUserById]);
 
+  const receiveMessage = useCallback((msg) => {
+    if (msg && msg.from && msg.to === userRut) {
+      setMessages((state) => [...state, msg]);
+    } else {
+      console.error( msg);
+    }
+  }, [userRut]);
 
+  useEffect(() => {
+    socket.emit('join', { token, rut: userRut });
+
+    socket.on('users', (users) => {
+      setUsers(users);
+      const differentUser = users.find(user => user !== userRut);
+      if (differentUser && !selectedUser) {
+        setSelectedUser(differentUser);
+      }
+    });
+
+    socket.on('chat message', receiveMessage);
+
+    return () => {
+      socket.off('users');
+      socket.off('chat message', receiveMessage);
+    };
+  }, [token, userRut, selectedUser, receiveMessage]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -67,61 +87,11 @@ const ChatComponent = ({ partnerRut }) => {
     };
     setMessages([...messages, newMessage]);
     socket.emit('chat message', { message, token, partnerRut: selectedUser, userRut });
-    console.log('selectedUser:', selectedUser);
-    console.log('token:', token);
-  };
-
-  // useEffect(() => {
-  //   socket.on('chat message', receiveMessage);
-  //   return () => {
-  //     socket.off('chat message', receiveMessage);
-  //   };
-  // }, []);
-
-  useEffect(() => {
-    socket.emit('join', { token, rut: userRut });
-
-    socket.on('users', (users) => {
-      setUsers(users);
-      // Automatically select a user different from userRut
-      const differentUser = users.find(user => user !== userRut);
-      if (differentUser && !selectedUser) {
-        setSelectedUser(differentUser);
-      }
-    });
-
-    socket.on('chat message', receiveMessage);
-
-    return () => {
-      socket.off('users');
-      socket.off('chat message', receiveMessage);
-    };
-  }, [token, userRut, selectedUser]);
-
-  const receiveMessage = (msg) => {
-    if (msg && msg.from && msg.to === userRut) {
-      setMessages((state) => [...state, msg]);
-    } else {
-      console.error('Received message without "from" property or not intended for this user:', msg);
-    }
+    console.log(`Sent message: "${message}" from ${userName} (${userRole}) to ${selectedUser}`);
   };
 
   return (
     <>
-      <div>
-        <p className="text-xl font-semibold text-blue-600/100 dark:text-blue-500/100">Usuarios Conectados</p>
-        <ul>
-          {users.map((user) => (
-            <li
-              key={user}
-              onClick={() => setSelectedUser(user)}
-              className={`bg-white p-2 rounded-lg shadow-md hover:bg-gray-100 ${selectedUser === user ? 'bg-gray-200' : ''} ${user === userRut ? 'bg-blue-200' : ''}`}
-            >
-              {user.length > 10 ? `${user.substring(0, 10)}...` : user}
-            </li>
-          ))}
-        </ul>
-      </div>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
