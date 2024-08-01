@@ -50,13 +50,20 @@ app.use('/review', reviewRoutes);
 app.post("/login", async (req, res) => {
 	try {
 		let user = await User.findOne({ rut: req.body.rut });
-		let userType = "user";
+		// let userType = "user";
+		if(user.role == "user"){	
+			userType = "user";
+		}else if (user.role == "admin"){
+			userType = "admin";
+		}
 
 		if (!user) {
 			console.log("rut:", req.body.rut);
 			user = await Carrier.findOne({ rut: req.body.rut });
 			userType = "carrier";
 		}
+
+		
 
 		if (!user) {
 			console.log("rut segundo:", req.body.rut);
