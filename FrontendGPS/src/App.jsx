@@ -21,6 +21,11 @@ import MisReviews from './pages/Carrier/misReviews.jsx';
 
 import CarrierListPage from './pages/carrierPages/carrierListPage.jsx';
 import CarrierRegisterPage from './pages/carrierPages/carrierRegisterPage.jsx';
+
+import ContactPage from './pages/ContactPage.jsx';
+import NavigationPage from './pages/Maps/Navigation.jsx';
+import LiveTrackingPage  from './pages/Maps/LiveTrackingPage.jsx';
+
 import PublicationListCard from './components/publicacionComponents/publicationListCard.jsx';
 
 function Redirector() {
@@ -75,7 +80,9 @@ function App() {
           <Route path="/registro" element={<RegisterPage/>} />
           <Route path="/publication/details/:id" element={<Layout><PublicationDetailsPage/></Layout>} />
           <Route path='/misreviews' element={<Layout><MisReviews/></Layout>} />
-           
+          <Route path="/contacto" element={<Layout><ContactPage/></Layout>} />
+          <Route path="/navegacion/:id" element={<Layout><NavigationPage/></Layout>} />
+          <Route path="/seguimiento/:id" element={<Layout><LiveTrackingPage/></Layout>} />
         </Routes>
       </div>
     </Router>

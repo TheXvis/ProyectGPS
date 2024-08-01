@@ -1,23 +1,33 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
+import emailjs from '@emailjs/browser';
+import CouponList from '../components/couponComponents/couponList';
+import CouponForm from '../components/couponComponents/couponForm';
+import PublicationSelect from '../components/couponComponents/PublicationSelect';
+import EditCouponModal from '../components/couponComponents/EditCouponModal';
 
 function PagoPage() {
-    const [coupon, setCoupon] = useState();
+    const [coupon, setCoupon] = useState(null);
     const [coupons, setCoupons] = useState([]);
     const [userId, setUserId] = useState(null);
     const [showCoupons, setShowCoupons] = useState(false);
+    const [userRole, setUserRole] = useState(null);
+    const [publications, setPublications] = useState([]);
+    const [selectedPublication, setSelectedPublication] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
     const [searchRut, setSearchRut] = useState('');
     const [adminCoupons, setAdminCoupons] = useState([]);
-    const [userRole, setUserRole] = useState(null);
-    const [selectedCoupon, setSelectedCoupon] = useState(null);
-    const [showEditModal, setShowEditModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedCoupon, setSelectedCoupon] = useState(null);
+
 
     useEffect(() => {
         if (typeof window !== 'undefined' && window.localStorage) {
-            const rut = localStorage.getItem('rut');
+            let rut = localStorage.getItem('rut');
             const role = localStorage.getItem('role');
+            rut = cleanRut(rut);
             console.log('Valor de rut en localStorage:', rut);
             console.log('Rol del usuario:', role);
             setUserId(rut);
@@ -25,21 +35,112 @@ function PagoPage() {
         }
     }, []);
 
+    const cleanRut = (rut) => {
+        return rut.replace(/[.\-]/g, '');
+    };
+
+    useEffect(() => {
+        const fetchPublications = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/publication/ver/${userId}`);
+                setPublications(response.data);
+            } catch (error) {
+                console.error(`Error al obtener las publicaciones: ${error}`);
+            }
+        };
+
+        if (userId) {
+            fetchPublications();
+        }
+    }, [userId]);
+
+    const fetchAddress = async (lat, lng) => {
+        try {
+            const response = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+                params: {
+                    lat,
+                    lon: lng,
+                    format: 'json'
+                }
+            });
+            return response.data.display_name;
+        } catch (error) {
+            console.error('Error al obtener la dirección:', error);
+            return 'Sin destino';
+        }
+    };
+
+    const sendEmailToAdmin = async (subject, message) => {
+        try {
+            await emailjs.send(
+                import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                {
+                    subject,
+                    message,
+                    to_email: import.meta.env.VITE_ADMIN_EMAIL,
+                },
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+            );
+            console.log('Correo enviado con éxito');
+        } catch (error) {
+            console.error('Error al enviar el correo:', error);
+        }
+    };
+
+
     const handleGenerateCoupon = async () => {
-        const amount = 20000;
+        if (!selectedPublication) {
+            alert('Por favor, selecciona una publicación.');
+            return;
+        }
+
+        const { precio, _id, nombre, ubicacionDescarga } = selectedPublication;
+        const amount = precio;
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + 3);
         const dueDateString = dueDate.toISOString();
+
+        let interpUbicacionDescarga;
+        try {
+            interpUbicacionDescarga = JSON.parse(ubicacionDescarga);
+        } catch (e) {
+            console.error("Error al interpretar la ubicación de descarga:", e);
+            alert("Ubicación de descarga no válida");
+            return;
+        }
+
+        if (interpUbicacionDescarga && interpUbicacionDescarga.lat && interpUbicacionDescarga.lng) {
+            console.log("Ubicación de descarga válida:", interpUbicacionDescarga);
+        } else {
+            console.error("Ubicación de descarga no válida:", interpUbicacionDescarga);
+            alert("Ubicación de descarga no válida");
+            return;
+        }
+
+        const address = await fetchAddress(interpUbicacionDescarga.lat, interpUbicacionDescarga.lng);
+        console.log("Dirección obtenida:", address);
 
         const data = {
             userId,
             amount,
             dueDate: dueDateString,
+            publicationId: _id,
+            publicationName: nombre,
+            publicationDestination: address
         };
 
         try {
-            const response = await axios.post('http://localhost:3000/cupon', data);
-            setCoupon(response.data);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/cupon`, data);
+            const newCoupon = {
+                ...response.data,
+                publicationName: nombre,
+                publicationDestination: address
+            };
+            console.log("Nuevo cupón generado:", newCoupon);
+            setCoupon(newCoupon);
+            setCoupons([...coupons, newCoupon]);  // Actualiza el estado de la lista de cupones
+
             const doc = new jsPDF();
 
             // Titulo
@@ -81,15 +182,22 @@ function PagoPage() {
             doc.text('Este es un cupón de pago generado automáticamente.', 105, 130, null, null, 'center');
 
             doc.save(`Cupon_${data.userId}.pdf`);
+
+            // Enviar correo al admin
+            await sendEmailToAdmin(
+                'Nuevo Cupón Generado',
+                `El usuario ${userId} ha generado un nuevo cupón con ID ${newCoupon._id}.`
+            );
         } catch (error) {
             console.error(`Error al generar el cupón: ${error}`);
         }
     };
 
+
     useEffect(() => {
         const fetchCoupons = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/cupon`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/cupon`, {
                     params: { userId }
                 });
                 setCoupons(response.data);
@@ -108,23 +216,75 @@ function PagoPage() {
     };
 
     const handleDeleteCoupon = async (couponId) => {
+        if (window.confirm("¿Está seguro que desea eliminar este cupón?")) {
+            try {
+                const response = await axios.delete(`${import.meta.env.VITE_API_URL}/cupon/${couponId}`);
+                if (response.status === 200) {
+                    // Actualiza los cupones para eliminar el cupón eliminado
+                    setCoupons(coupons.filter((coupon) => coupon._id !== couponId));
+                    setAdminCoupons(adminCoupons.filter((coupon) => coupon._id !== couponId));
+                } else {
+                    console.error('Error al eliminar el cupón');
+                }
+            } catch (error) {
+                console.error('Error al eliminar el cupón', error);
+            }
+        }
+    };
+
+    const handleFileChange = (event, couponId) => {
+        const file = event.target.files[0];
+        if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+            setSelectedFile({ file, couponId });
+        } else {
+            alert('Por favor, sube un archivo .png o .jpg');
+        }
+    };
+
+    const handleUploadFile = async (couponId) => {
+        if (!selectedFile || selectedFile.couponId !== couponId) {
+            alert('No hay archivo seleccionado o el archivo seleccionado no coincide con el cupón.');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('file', selectedFile.file);
+
         try {
-            const response = await axios.delete(`http://localhost:3000/cupon/${couponId}`);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/cupon/upload/${couponId}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
             if (response.status === 200) {
-                // Recarga los cupones después de eliminar uno
-                setCoupons(coupons.filter((coupon) => coupon._id !== couponId));
-            } else {
-                console.error('Error al eliminar el cupón');
+                setCoupons(coupons.map(c => c._id === couponId ? { ...c, receipt: response.data.receipt } : c));
+                setSelectedFile(null);
+
+
+                await sendEmailToAdmin(
+                    'Comprobante Subido',
+                    `El usuario ${userId} ha subido un comprobante para el cupón con ID ${couponId}.`
+                );
             }
         } catch (error) {
-            console.error('Error al eliminar el cupón', error);
+            console.error('Error al subir el archivo:', error);
+        }
+    };
+
+    const handleDeleteReceipt = async (couponId) => {
+        try {
+            const response = await axios.delete(`${import.meta.env.VITE_API_URL}/cupon/${couponId}/delete-image/`);
+            if (response.status === 200) {
+                setCoupons(coupons.map(c => c._id === couponId ? { ...c, receipt: null } : c));
+            }
+        } catch (error) {
+            console.error('Error al eliminar el comprobante:', error);
         }
     };
 
     const handleSearchByRut = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/cupon`, {
-                params: { userId: searchRut }
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/cupon`, {
+                params: { userId: cleanRut(searchRut) }
             });
             if (response.data.length === 0) {
                 setErrorMessage('Usuario no presenta cupones');
@@ -143,15 +303,10 @@ function PagoPage() {
         }
     };
 
-    const handleEditCoupon = (coupon) => {
-        setSelectedCoupon(coupon);
-        setShowEditModal(true);
-    };
-
     const handleUpdateCouponStatus = async () => {
         const newStatus = !selectedCoupon.isPaid;
         try {
-            const response = await axios.put(`http://localhost:3000/cupon/${selectedCoupon._id}`, {
+            const response = await axios.put(`${import.meta.env.VITE_API_URL}/cupon/${selectedCoupon._id}`, {
                 isPaid: newStatus
             });
             if (response.status === 200) {
@@ -162,33 +317,6 @@ function PagoPage() {
             }
         } catch (error) {
             console.error('Error al actualizar el estado del cupón', error);
-        }
-    };
-
-    const handleFileUpload = async (couponId, file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-            const response = await axios.post(`http://localhost:3000/cupon/upload/${couponId}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            if (response.status === 200) {
-                setCoupons(coupons.map(c => c._id === couponId ? { ...c, receipt: response.data.receipt } : c));
-            }
-        } catch (error) {
-            console.error('Error al subir el archivo:', error);
-        }
-    };
-
-    const handleFileChange = (couponId, event) => {
-        const file = event.target.files[0];
-        if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
-            handleFileUpload(couponId, file);
-        } else {
-            alert('Por favor, sube un archivo .png o .jpg');
         }
     };
 
@@ -213,7 +341,6 @@ function PagoPage() {
             {coupon && (
                 <div style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                     <h2 style={{ marginBottom: '10px' }}>Cupón generado</h2>
-                    <p><strong>Id:</strong> {coupon._id}</p>
                     <p><strong>Rut:</strong> {coupon.userId}</p>
                     <p><strong>Monto:</strong> {coupon.amount}</p>
                     <p><strong>Fecha de Vencimiento</strong>: {new Date(coupon.dueDate).toLocaleDateString('es-ES', {
@@ -221,49 +348,26 @@ function PagoPage() {
                         month: '2-digit',
                         year: 'numeric',
                     })}</p>
+                    <p><strong>Publicación:</strong> {coupon.publicationName}</p>
+                    <p><strong>Destino:</strong> {coupon.publicationDestination}</p>
                 </div>
             )}
+            <PublicationSelect
+                publications={publications}
+                selectedPublication={selectedPublication}
+                setSelectedPublication={setSelectedPublication}
+            />
             {showCoupons && (
-                <div>
-                    <ul style={{ padding: '0', listStyleType: 'none' }}>
-                        {coupons.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)).map((coupon, index) => {
-                            const dueDate = new Date(coupon.dueDate);
-                            return (
-                                <li key={coupon._id} style={{ marginBottom: '10px', backgroundColor: '#3b82f6', borderRadius: '10px', padding: '15px', color: 'white', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Cupón {index + 1}: {coupon._id}</div>
-                                    <div>Rut: {coupon.userId}</div>
-                                    <div>Fecha de vencimiento: {dueDate.toLocaleDateString()}</div>
-                                    <div>Monto: {coupon.amount}</div>
-                                    <div>Estado: {coupon.isPaid ? 'Pagado' : 'No pagado'}</div>
-                                    <input type="file" accept=".png, .jpg" onChange={(event) => handleFileChange(coupon._id, event)} className="mt-2" />
-                                    {userId === 'admin' && (
-                                        <button
-                                            type="button"
-                                            onClick={() => handleEditCoupon(coupon)}
-                                            className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                        >
-                                            <svg className="w-6 h-6 text-gray-800 dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                <path fillRule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clipRule="evenodd"/>
-                                                <path fillRule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clipRule="evenodd"/>
-                                            </svg>
-                                            <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Editar</span>
-                                        </button>
-                                    )}
-                                    <button
-                                        type="button"
-                                        onClick={() => handleDeleteCoupon(coupon._id)}
-                                        className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                    >
-                                        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
-                                        </svg>
-                                        <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Eliminar</span>
-                                    </button>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
+                <CouponList
+                    coupons={coupons}
+                    handleFileChange={handleFileChange}
+                    handleUploadFile={handleUploadFile}
+                    handleDeleteCoupon={handleDeleteCoupon}
+                    handleDeleteReceipt={handleDeleteReceipt}
+                    setSelectedCoupon={setSelectedCoupon}
+                    setShowEditModal={setShowEditModal}
+                    isAdminView={false}
+                />
             )}
             {userRole === 'admin' && (
                 <div style={{ marginTop: '20px', color: 'white' }}>
@@ -287,64 +391,25 @@ function PagoPage() {
                     {adminCoupons.length > 0 && (
                         <div style={{ marginTop: '20px' }}>
                             <h4>Resultados de la búsqueda</h4>
-                            <ul style={{ padding: '0', listStyleType: 'none' }}>
-                                {adminCoupons.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)).map((coupon, index) => {
-                                    const dueDate = new Date(coupon.dueDate);
-                                    return (
-                                        <li key={coupon._id} style={{ marginBottom: '10px', backgroundColor: '#3b82f6', borderRadius: '10px', padding: '15px', color: 'white', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                                            <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Cupón {index + 1}: {coupon._id}</div>
-                                            <div>Rut: {coupon.userId}</div>
-                                            <div>Fecha de vencimiento: {dueDate.toLocaleDateString()}</div>
-                                            <div>Monto: {coupon.amount}</div>
-                                            <div>Estado: {coupon.isPaid ? 'Pagado' : 'No pagado'}</div>
-                                            {userId === 'admin' && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleEditCoupon(coupon)}
-                                                    className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                                >
-                                                    <svg className="w-6 h-6 text-gray-800 dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path fillRule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clipRule="evenodd"/>
-                                                        <path fillRule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clipRule="evenodd"/>
-                                                    </svg>
-                                                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Editar</span>
-                                                </button>
-                                            )}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
+                            <CouponList
+                                coupons={adminCoupons}
+                                handleFileChange={handleFileChange}
+                                handleUploadFile={handleUploadFile}
+                                handleDeleteCoupon={handleDeleteCoupon}
+                                setSelectedCoupon={setSelectedCoupon}
+                                setShowEditModal={setShowEditModal}
+                                isAdminView={true}
+                            />
                         </div>
                     )}
                 </div>
             )}
             {showEditModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
-                        <h2 className="text-xl font-bold mb-4">Editar estado del cupón</h2>
-                        <p>Id: {selectedCoupon._id}</p>
-                        <p>Rut: {selectedCoupon.userId}</p>
-                        <p>Monto: {selectedCoupon.amount}</p>
-                        <p>Fecha de Vencimiento: {new Date(selectedCoupon.dueDate).toLocaleDateString('es-ES', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                        })}</p>
-                        <p>Estado: {selectedCoupon.isPaid ? 'Pagado' : 'No pagado'}</p>
-                        <button
-                            className="mt-4 text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                            onClick={handleUpdateCouponStatus}
-                        >
-                            {selectedCoupon.isPaid ? 'Marcar como Pendiente' : 'Marcar como Pagado'}
-                        </button>
-                        <button
-                            className="mt-4 ml-2 text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                            onClick={() => setShowEditModal(false)}
-                        >
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
+                <EditCouponModal
+                    selectedCoupon={selectedCoupon}
+                    handleUpdateCouponStatus={handleUpdateCouponStatus}
+                    setShowEditModal={setShowEditModal}
+                />
             )}
         </div>
     );

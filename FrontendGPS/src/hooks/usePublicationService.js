@@ -9,7 +9,7 @@ export const usePublicationService = () => {
 
     const fetchPublications = async () => {
         try {
-            const response = await fetch("http://localhost:3000/publication/verTodo", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/publication/verTodo`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -22,7 +22,7 @@ export const usePublicationService = () => {
 
     const editPublication = async (id, publicationData) => {
         try {
-            const response = await fetch(`http://localhost:3000/publication/editar/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/publication/editar/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(publicationData)
@@ -37,7 +37,7 @@ export const usePublicationService = () => {
 
     const deletePublication = async (id) => {
         try {
-            const response = await fetch(`http://localhost:3000/publication/borrar/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/publication/borrar/${id}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" }
             });
@@ -51,7 +51,7 @@ export const usePublicationService = () => {
 
     const getPublicationById = async (id) => {
         try {
-            const response = await fetch(`http://localhost:3000/publication/ver/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/publication/ver/${id}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });

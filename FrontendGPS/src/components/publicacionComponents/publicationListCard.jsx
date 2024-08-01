@@ -4,7 +4,8 @@ import ChatComponent from '../chatComponents/chatComponent';
 
 const PublicationListCard = () => {
     const { publications } = usePublicationService();
-    const rut = localStorage.getItem('rut');
+    const rawRut = localStorage.getItem('rut');
+    const rut = rawRut ? rawRut.replace(/\./g, '').replace('-', '') : '';
     const role = localStorage.getItem('role');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPublication, setSelectedPublication] = useState(null);
@@ -18,6 +19,10 @@ const PublicationListCard = () => {
         setIsModalOpen(false);
         setSelectedPublication(null);
     };
+    
+
+    console.log(publications);
+    console.log(rut);
 
     const filteredPublications = publications.filter(publication => {
         if (role === 'carrier') {

@@ -6,7 +6,7 @@ const CarrierList = () => {
     useEffect(() => {
         const fetchCarriers = async () => {
             try {
-                const response = await fetch("http://localhost:3000/carrier/verTodos",
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/carrier/verTodos`,
                     {
                         method: "GET",
                         headers: { "Content-Type": "application/json" }

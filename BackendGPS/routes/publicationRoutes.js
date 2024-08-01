@@ -108,6 +108,19 @@ router.get('/ver/:rutUser', async (req, res) => {
   }
 });
 
+router.get('/verPCa/:rutCarrier', async (req, res) => {
+  const rutCarrier = req.params.rutCarrier;
+  try {
+    const publications = await Publication.find({ rutCarrier: rutCarrier });
+    if (!publications.length) {
+      return res.status(404).send();
+    }
+    res.send(publications);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 router.get('/buscar/:id', async (req, res) => {
   try {
     const publication = await Publication.findById(req.params.id);
