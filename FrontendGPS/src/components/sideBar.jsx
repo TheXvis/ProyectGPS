@@ -83,7 +83,7 @@ function SideBar() {
 						
 
 						{/* hacer que al clikar nombre este te envie a user-home */}
-						<Link to="/user-home" className="ml-4 text-xl font-semibold z-50">Plataforma Transporte</Link>
+						<Link to="/usuario-home" className="ml-4 text-xl font-semibold z-50">Plataforma Transporte</Link>
 					</div>
 					<div className="flex-1 text-right">
 						{/* Elemento central */}
