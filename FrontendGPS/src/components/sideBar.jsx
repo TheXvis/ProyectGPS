@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import TruckIcon from "../assets/truck.svg";
 
 const handleLogout = () => {
 	localStorage.removeItem("token");
@@ -77,7 +78,12 @@ function SideBar() {
 								)}
 							</svg>
 						</button>
-						<span className="ml-4 text-xl font-semibold z-50">App Fletes</span>
+						{/* Logo invertir color del logo con codigo taidlwind*/}
+						<img src={TruckIcon} alt="Truck Icon" className="w-8 h-8 invert z-50 ml-4 " />
+						
+
+						{/* hacer que al clikar nombre este te envie a user-home */}
+						<Link to="/user-home" className="ml-4 text-xl font-semibold z-50">App Fletes</Link>
 					</div>
 					<div className="flex-1 text-right">
 						{/* Elemento central */}
