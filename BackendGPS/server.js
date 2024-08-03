@@ -48,44 +48,40 @@ app.use('/cupon', cuponRoutes); // Asegúrate de que las rutas para los cupones 
 app.use('/review', reviewRoutes);
 
 app.post("/login", async (req, res) => {
-	try {
-		let user = await User.findOne({ rut: req.body.rut });
-		// let userType = "user";
-		if(user.role == "user"){	
-			userType = "user";
-		}else if (user.role == "admin"){
-			userType = "admin";
-		}
+    try {
+        let user = await User.findOne({ rut: req.body.rut });
+        let userType = null; // Inicializar con null para detectar más fácilmente errores
 
-		if (!user) {
-			console.log("rut:", req.body.rut);
-			user = await Carrier.findOne({ rut: req.body.rut });
-			userType = "carrier";
-		}
+        if (user) { // Verificar si el usuario fue encontrado
+            if (user.role === "user") {
+                userType = "user";
+            } else if (user.role === "admin") {
+                userType = "admin";
+            }
+        } else {
+            console.log("Usuario no encontrado en User, buscando en Carrier:", req.body.rut);
+            user = await Carrier.findOne({ rut: req.body.rut });
+            if (user) {
+                userType = "carrier"; // Solo establecer userType si el usuario es encontrado
+            }
+        }
 
-		
+        if (!user) { // Si después de ambas búsquedas no se encontró al usuario
+            console.log("Usuario no encontrado:", req.body.rut);
+            return res.status(400).json({ message: "User not found" });
+        }
 
-		if (!user) {
-			console.log("rut segundo:", req.body.rut);
-			return res.status(400).json({ message: "User not found" });
-		}
-		console.log("user:", user);
-		const validPassword = await bcrypt.compare(
-			req.body.password,
-			user.password
-		);
-		if (!validPassword) {
-			return res.status(400).json({ message: "Invalid password" });
-		}
+        const validPassword = await bcrypt.compare(req.body.password, user.password);
+        if (!validPassword) {
+            return res.status(400).json({ message: "Invalid password" });
+        }
 
-		const token = jwt.sign(
-			{ _id: user._id, role: userType },
-			process.env.JWT_SECRET
-		);
-		res.status(200).json({ token: token, role: userType });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+        const token = jwt.sign({ _id: user._id, role: userType }, process.env.JWT_SECRET);
+        res.status(200).json({ token: token, role: userType });
+    } catch (error) {
+        console.log("ERROR:", error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.post("/registro", async (req, res) => {

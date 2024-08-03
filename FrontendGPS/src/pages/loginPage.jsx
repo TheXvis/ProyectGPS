@@ -29,6 +29,7 @@ function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rut: rut.replace(/\./g, '').replace('-', ''), password }), // Enviar RUT sin puntos ni guiones
       });
+      
       const data = await response.json();
       if (response.ok) {
         console.log('Rol devuelto por el backend:', data.role);
