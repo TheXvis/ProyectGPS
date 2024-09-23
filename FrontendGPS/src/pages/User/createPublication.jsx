@@ -8,7 +8,15 @@ function CreatePublicationForm() {
 	const [tipoMercancia, setTipoMercancia] = useState("");
 	const [imagen, setImagen] = useState("");
 	const [peso, setPeso] = useState("");
+	const [mostrarOtroInput, setMostrarOtroInput] = useState(false);
+    const [otroTipo, setOtroTipo] = useState('');
 	const navigate = useNavigate();
+
+	const handleTipoMercanciaChange = (e) => {
+        const value = e.target.value;
+        setTipoMercancia(value);
+        setMostrarOtroInput(value === 'Otros');
+    };
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -65,16 +73,43 @@ function CreatePublicationForm() {
 						className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
 						Tipo de mercancia
 					</label>
-					<input
-						type="text"
-						id="base-input"
-						className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-						value={tipoMercancia}
-						onChange={(e) => setTipoMercancia(e.target.value)}
-						placeholder="Tipo Mercancia"
-						required
-					/>
+                    <select
+                        id="tipo-mercancia"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        value={tipoMercancia}
+                        onChange={handleTipoMercanciaChange}
+                        required
+                    >
+                        <option value="">Selecciona un tipo</option>
+                        <option value="Electrodomesticos">Electrodomesticos</option>
+                        <option value="Ropa">Ropa</option>
+                        <option value="Alimentos">Alimentos</option>
+                        <option value="Muebles">Muebles</option>
+                        <option value="Herramientas">Herramientas</option>
+						<option value="Electronica">Electronica</option>
+                        <option value="Maquinaria">Maquinaria</option>
+						<option value="Deportes">Deportes</option>
+                        <option value="Otros">Otros</option>
+                    </select>
 				</div>
+				{mostrarOtroInput && (
+                    <div className="mb-5">
+                        <label
+                            htmlFor="otro-tipo"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Especificar otro tipo
+                        </label>
+                        <input
+                            type="text"
+                            id="otro-tipo"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={otroTipo}
+                            onChange={(e) => setOtroTipo(e.target.value)}
+                            placeholder="Especificar otro tipo"
+                            required={mostrarOtroInput}
+                        />
+                    </div>
+                )}
 				<div className="mb-5">
 					<label
 						htmlFor="image-input"
